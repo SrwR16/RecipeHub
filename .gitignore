@@ -4,3 +4,4 @@ Aaaaaa.txt
 __pycache__/
 migrations/
 .vscode/
+.env
