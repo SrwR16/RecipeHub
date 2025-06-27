@@ -1,0 +1,6 @@
+masterChef/.env
+venv
+Aaaaaa.txt
+__pycache__/
+migrations/
+.vscode/
