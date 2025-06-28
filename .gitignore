@@ -5,3 +5,4 @@ __pycache__/
 migrations/
 .vscode/
 .env
+shell.nix
