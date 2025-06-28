@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="emerald">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RecipeHub</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="css/auth.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/3b65cadd71.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+  </head>
+  <body>
+    <header>
+        <div class="navbar px-0 lg:px-10 bg-base-100 fixed top-0 w-full z-50">
+          <div class="navbar-start">
+            <div class="dropdown">
+              <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+                </svg>
+              </div>
+              <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                <li class="font-semibold"><a href="./index.html">Home</a></li>
+                <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
+                <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
+                <li class="font-semibold"><a href="./contact.html">Support</a></li>
+              </ul>
+            </div>
+            <p class="btn btn-ghost text-xl p-0 montserrat-alternates-bold text-3xl font-semibold">Recipe</p>
+            <span class="font-light text-2xl primary-text-color">Hub</span>
+          </div>
+          <div class="navbar-center hidden lg:flex">
+            <ul class="menu menu-horizontal px-1">
+              <li class="font-semibold"><a href="./index.html">Home</a></li>
+              <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
+              <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
+              <li class="font-semibold"><a href="./contact.html">Support</a></li>
+            </ul>
+          </div>
+          <div class="navbar-end gap-5 flex justify-items-center">
+
+            <!-- Notification Icon And Dropdown -->
+            <div class="indicator mt-0.5">
+                <div id="notification-icon" class="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" 
+                        />
+                    </svg>
+                    <span class="badge badge-xs notification-badge indicator-item" style="background-color: #77574c; color: white;"></span>
+                </div>
+            
+                <!-- Notification Dropdown -->
+                <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg overflow-hidden z-10">
+                    <ul id="notification-list" class="list-none p-2">
+                        <!-- Notification messages will appear here -->
+                    </ul>
+                </div>
+            </div>                       
+            <!-- Notification Icon And Dropdown End-->
+
+            <div class="indicator">
+              <a href="chat.html">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 8v12a2 2 0 002 2h14a2 2 0 002-2V8M3 8l9 5 9-5M3 8l9 5 9-5M3 8h18"
+                  />
+                </svg>
+              </a>
+              <span class="badge badge-xs indicator-item" style="background-color: #77574c"></span>
+            </div>
+            
+            <div id="login-control" class="pr-5 lg:pr-0">
+              
+            </div>
+          </div>
+        </div>
+    </header>
+   
+    <main class="flex h-screen bg-gray-100 pt-20">
+
+        <!-- Left Column: Group List -->
+        <div class="w-1/4 bg-white shadow-md rounded-lg p-4 h-full">
+            <h2 class="font-bold text-xl mb-4">Groups</h2>
+            <div id="group-set-left">
+                <ul id="group-list" class="space-y-2">
+                    <!-- Groups will be dynamically populated here -->
+                </ul>
+            </div>
+
+            <!-- Input Field to Add Group -->
+            <div class="mt-4">
+                <input type="text" id="group-input" class="w-full p-2 border border-gray-300 rounded-lg" placeholder="Enter group name" />
+                <button id="add-group-btn" class="mt-2 w-full primary-color text-white py-2 rounded-lg hover:bg-gray-700 transition">Create New Group</button>
+            </div>
+        </div>
+    
+
+        <!-- Middle Column: User Posts -->
+        <div class="w-1/2 overflow-y-scroll h-full p-4">
+            <div class="flex justify-between justify-items-center">
+                <h2 class="font-bold text-xl mb-4">Users Post</h2>
+                <p class="font-bold text-xl mb-4 primary-text-color"><a href="">Your Post</a></p>
+            </div>
+            <!-- Post Item -->
+            <div id="post-container" class="space-y-6">
+                <!-- Dynamic posts will be appended here -->
+            </div>
+            
+        </div>
+    
+        <!-- Right Column: Post Form -->
+        <div class="w-1/4 bg-white shadow-md rounded-lg p-6 h-full">
+            <h2 class="font-bold text-xl mb-4">Create Post</h2>
+        
+            <!-- Title Field -->
+            <form id="postForm">
+                <input type="text" class="w-full border border-gray-300 rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter title" />
+            
+                <!-- Text Area -->
+                <textarea class="w-full p-3 border border-gray-300 rounded-lg resize-none h-24 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="What's on your mind?"></textarea>
+            
+                <!-- File Upload Icons -->
+                <div class="mt-4 flex items-center space-x-6">
+                    <label class="cursor-pointer">
+                        <i class="fas fa-image primary-text-color hover:text-gray-800 transition text-2xl"></i>
+                        <input type="file" class="hidden" accept="image/*" />
+                    </label>
+                    <label class="cursor-pointer">
+                        <i class="fas fa-video primary-text-color hover:text-gray-800 transition text-2xl"></i>
+                        <input type="file" class="hidden" accept="video/*" />
+                    </label>
+                </div>
+            
+                <!-- Flavors, Region, and Season -->
+                <div class="mt-4 space-y-2">
+                    <p class="font-medium text-gray-800">Flavour: <input type="text" class="border border-gray-300 rounded-lg p-2 w-full" placeholder="Enter flavor" /></p>
+                    <p class="font-medium text-gray-800">Region: <input type="text" class="border border-gray-300 rounded-lg p-2 w-full" placeholder="Enter region" /></p>
+                    <p class="font-medium text-gray-800">Season: <input type="text" class="border border-gray-300 rounded-lg p-2 w-full" placeholder="Enter season" /></p>
+                </div>
+                <button type="submit" class="mt-4 w-full text-white py-2 rounded-lg hover:bg-gray-800 transition" style="background-color: #77574c";>Post</button>
+            </form>
+        </div>
+
+    </main>
+    <script src="./js/recipe.js"></script>
+  </body>
+</html>

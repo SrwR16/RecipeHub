@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="emerald">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RecipeHub</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/3b65cadd71.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <style>
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="navbar px-0 lg:px-10 bg-base-100 fixed top-0 w-full z-50">
+        <div class="navbar-start">
+          <div class="dropdown">
+            <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+              </svg>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+              <li class="font-semibold"><a href="./index.html">Home</a></li>
+              <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
+              <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
+              <li class="font-semibold"><a href="./contact.html">Support</a></li>
+            </ul>
+          </div>
+          <p class="btn btn-ghost text-xl p-0 montserrat-alternates-bold text-3xl font-semibold">Recipe</p>
+          <span class="font-light text-2xl primary-text-color">Hub</span>
+        </div>
+        <div class="navbar-center hidden lg:flex">
+          <ul class="menu menu-horizontal px-1">
+            <li class="font-semibold"><a href="./index.html">Home</a></li>
+            <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
+            <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
+            <li class="font-semibold"><a href="./contact.html">Support</a></li>
+          </ul>
+        </div>
+        <div class="navbar-end gap-5 flex justify-items-center">
+          <div id="login-control" class="pr-5 lg:pr-0"></div>
+        </div>
+      </div>
+    </header>
+    <main class="h-screen bg-gray-300 pt-20">
+
+
+      <div class="container mx-auto w-1/2 pt-10" id="podcast-container">
+        <!-- Dynamic podcast details will be rendered here -->
+      </div>
+
+      <!-- Episodes List -->
+      <div class="container mx-auto mt-8">
+        <div class="container mx-auto mt-8 p-6" id="episodes-container">
+          <!-- Dynamic episodes will be displayed here -->
+        </div>
+      </div>
+
+
+    </main>
+    <script src="./js/podcast.js"></script>
+  </body>
+</html>

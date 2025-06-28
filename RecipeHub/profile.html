@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="emerald">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RecipeHub</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/3b65cadd71.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <header>
+      <div class="navbar px-0 lg:px-10 bg-base-100 fixed top-0 w-full z-50">
+        <div class="navbar-start">
+          <div class="dropdown">
+            <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+              </svg>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+              <li class="font-semibold"><a href="./index.html">Home</a></li>
+              <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
+              <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
+              <li class="font-semibold"><a href="./contact.html">Support</a></li>
+            </ul>
+          </div>
+          <p class="btn btn-ghost text-xl p-0 montserrat-alternates-bold text-3xl font-semibold">Recipe</p>
+          <span class="font-light text-2xl primary-text-color">Hub</span>
+        </div>
+        <div class="navbar-center hidden lg:flex">
+          <ul class="menu menu-horizontal px-1">
+            <li class="font-semibold"><a href="./index.html">Home</a></li>
+            <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
+            <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
+            <li class="font-semibold"><a href="./contact.html">Support</a></li>
+          </ul>
+        </div>
+        <div class="navbar-end gap-10">
+          <div id="login-control" class="pr-5 lg:pr-0"></div>
+        </div>
+      </div>
+    </header>
+    <main class="bg-base-200 lg:px-52 py-8 pt-16">
+      <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-semibold text-center mb-6">User Profile</h1>
+
+        <div class="bg-white shadow-md rounded-lg p-6">
+          <form action="" method="POST" enctype="multipart/form-data" onsubmit="profileUpdate(event)">
+            <div class="flex flex-col items-center mb-6">
+              <img id="profile-picture" src="" alt="Profile Picture" class="w-32 h-32 rounded-full object-cover mb-4" />
+              <input type="file" name="profile_picture" class="mb-4" />
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Username:</label>
+              <input
+                id="username"
+                type="text"
+                name="username"
+                value=""
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                readonly
+              />
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Full Name:</label>
+              <input
+                id="full_name"
+                type="text"
+                name="full_name"
+                value=""
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                required
+              />
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Email:</label>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                value=""
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                required
+              />
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Creation Date:</label>
+              <input
+                id="creation_date"
+                type="text"
+                name="creation_date"
+                value=""
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                readonly
+              />
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Varification:</label>
+              <input
+                id="varification"
+                type="text"
+                name="varification"
+                value=""
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                readonly
+              />
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">User ID:</label>
+              <input
+                id="user_id"
+                type="text"
+                name="user_id"
+                value=""
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                readonly
+              />
+            </div>
+
+            <div class="flex justify-center">
+              <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">
+                Update Profile
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="container mx-auto p-6">
+        <h1 class="text-2xl font-bold mb-4">Order List:</h1>
+        <div id="order-list"></div>
+        <!-- This is where the dynamic orders will be inserted -->
+      </div>
+    </main>
+    <footer class="grid bg-base-100 w-full h-full">
+      <div class="px-14 mx-auto lg:grid grid-cols-12 gap-16 lg:flex justify-center items-cente py-16">
+        <div class="col-span-4">
+          <p class="btn btn-ghost text-xl p-0 montserrat-alternates-bold text-3xl font-semibold">Recipe</p>
+          <span class="font-light text-2xl primary-text-color">Hub</span>
+          <h1>Making the world a better place through constructing elegant hierarchies.</h1>
+          <div class="social-media-links flex gap-10 my-5 text-2xl">
+            <a href=""><i class="fa-brands fa-facebook"></i></a>
+            <a href=""><i class="fa-brands fa-instagram"></i></a>
+            <a href=""><i class="fa-brands fa-github"></i></a>
+            <a href=""><i class="fa-brands fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="col-span-2 leading-10">
+          <h1 class="font-semibold">Solutions</h1>
+          <p class="font-extralight">KhanaPina Deals</p>
+          <p class="font-extralight">Grocery delivery</p>
+          <p class="font-extralight">pandago for customers</p>
+          <p class="font-extralight">pandago for business</p>
+        </div>
+        <div class="col-span-2 leading-10">
+          <h1 class="font-semibold">Support</h1>
+          <p class="font-extralight">Pricing</p>
+          <p class="font-extralight">Careers</p>
+          <p class="font-extralight">Corporate Customer</p>
+          <p class="font-extralight">Dine-in</p>
+        </div>
+        <div class="col-span-2 leading-8">
+          <h1 class="font-semibold">Help Center</h1>
+          <p class="font-extralight">Privacy Policy</p>
+          <p class="font-extralight">Refund Account Terms and Conditions</p>
+          <p class="font-extralight">Cashback Program</p>
+          <p class="font-extralight">pandapro Subscription</p>
+        </div>
+        <div class="col-span-2 leading-8">
+          <h1 class="font-semibold">Terms and Conditions</h1>
+          <p class="font-extralight">Security</p>
+          <p class="font-extralight">Partner with Us</p>
+          <p class="font-extralight">How foodpanda Works</p>
+          <p class="font-extralight">Download foodpanda Apps</p>
+        </div>
+      </div>
+      <small class="text-center font-semibold bg-gray-700 h-9 text-white flex items-center justify-center">©All right reserved</small>
+    </footer>
+    <script src="./js/profile.js"></script>
+  </body>
+</html>

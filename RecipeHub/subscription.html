@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="emerald">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RecipeHub</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/3b65cadd71.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="navbar px-0 lg:px-10 bg-base-100 fixed top-0 w-full z-50">
+        <div class="navbar-start">
+          <div class="dropdown">
+            <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+              </svg>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+              <li class="font-semibold"><a href="./index.html">Home</a></li>
+              <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
+              <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
+              <li class="font-semibold"><a href="./contact.html">Support</a></li>
+            </ul>
+          </div>
+          <p class="btn btn-ghost text-xl p-0 montserrat-alternates-bold text-3xl font-semibold">Recipe</p>
+          <span class="font-light text-2xl primary-text-color">Hub</span>
+        </div>
+        <div class="navbar-center hidden lg:flex">
+          <ul class="menu menu-horizontal px-1">
+            <li class="font-semibold"><a href="./index.html">Home</a></li>
+            <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
+            <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
+            <li class="font-semibold"><a href="./contact.html">Support</a></li>
+          </ul>
+        </div>
+        <div class="navbar-end gap-5 flex justify-items-center">
+          <div class="indicator">
+            <a href="chat.html">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 8v12a2 2 0 002 2h14a2 2 0 002-2V8M3 8l9 5 9-5M3 8l9 5 9-5M3 8h18"
+                />
+              </svg>
+            </a>
+            <span class="badge badge-xs indicator-item" style="background-color: #77574c"></span>
+          </div>
+
+          <div id="login-control" class="pr-5 lg:pr-0"></div>
+        </div>
+      </div>
+    </header>
+    <main class="bg-base-200 lg:px-52 py-8 pt-16">
+      <div class="subcription-heading py-10">
+        <h1 class="text-4xl text-semibold">Subscription</h1>
+        <p class="text-light">Take your desired plan to get access without ads and get all the premium. Be happy, Maintain hygiene and enjoy your delicious meal.</p>
+      </div>
+      <!-- Plan Selection -->
+      <div class="subscription-heading-two flex flex-col justify-center items-center">
+        <h1 class="text-3xl font-semibold">Choose Your Plan</h1>
+        <div class="join border-of-plan mt-5">
+          <!-- Monthly Button -->
+          <button
+            id="monthly-btn"
+            class="btn-neutral join-item popular-recipe-button px-5 w-44 hover:bg-neutral"
+            onclick="showPlan('monthly')"
+          >
+            Monthly
+          </button>
+          <!-- Yearly Button -->
+          <button id="yearly-btn" class="btn join-item w-44" onclick="showPlan('yearly')">Yearly</button>
+        </div>
+      </div>
+      <!-- Subscription Plan Section -->
+      <div class="relative subscription-card bg-base-300 my-16 m-auto lg:flex justify-center items-center gap-16 py-10">
+        <!-- Background Text -->
+        <div class="absolute inset-0 flex justify-center items-center z-0">
+          <h1 class="recipehub-background-text">RecipeHub</h1>
+        </div>
+
+        <!-- Foreground content starts -->
+        <!-- Basic Plan (Monthly) -->
+        <div id="monthly-plan" class="bg-base-100 relative px-12 pt-6 rounded-md h-fit z-10">
+          <div class="flex flex-col items-center">
+            <h1 class="price-heading-border-basic text-2xl w-fit px-5">Basic</h1>
+            <h1 class="text-4xl py-2"><i class="fa-solid fa-sterling-sign"></i>7</h1>
+            <small>User/Month</small>
+          </div>
+          <div class="pt-4 leading-8 pb-20">
+            <p><i class="fa-solid fa-circle-check pr-1"></i>Premimum Podcast</p>
+            <p><i class="fa-solid fa-circle-check pr-1"></i>Premimum Recipe</p>
+            <p><i class="fa-solid fa-circle-check pr-1"></i>First Forward Support</p>
+            <p><i class="fa-solid fa-circle-check pr-1"></i>Daily Offers</p>
+            <p><i class="fa-solid fa-circle-check pr-1"></i>Other Profile Visualize</p>
+            <p><i class="fa-solid fa-circle-check pr-1"></i>Earning with GEM </p>
+          </div>
+          <button class="absolute bottom-3 btn-neutral popular-recipe-button ml-7 rounded px-4 py-2" onclick="checkVerificationAndSubscribe(1, 7)">Choose Plan</button>
+        </div>
+
+        <!-- Advance Plan (Yearly - initially hidden) -->
+        <div id="yearly-plan" class="hidden bg-base-100 relative px-12 pt-6 rounded-md h-fit z-10">
+          <div class="flex flex-col items-center">
+            <h1 class="price-heading-border-basic text-2xl w-fit px-5">Advance</h1>
+            <h1 class="text-4xl py-2"><i class="fa-solid fa-sterling-sign"></i>92</h1>
+            <small>User/Year</small>
+          </div>
+          <div class="pt-4 leading-8 pb-20">
+            <p><i class="fa-solid fa-circle-check pr-1"></i>No Add</p>
+            <p><i class="fa-solid fa-circle-check pr-1"></i>Premimum Podcast</p>
+            <p><i class="fa-solid fa-circle-check pr-1"></i>Premimum Recipe</p>
+            <p><i class="fa-solid fa-circle-check pr-1"></i>First Forward Support</p>
+            <p><i class="fa-solid fa-circle-check pr-1"></i>Daily Offers</p>
+            <p><i class="fa-solid fa-circle-check pr-1"></i>Other Profile Visualize</p>
+            <p><i class="fa-solid fa-circle-check pr-1"></i>Earning with GEM </p>
+          </div>
+          <button class="absolute bottom-3 btn-neutral popular-recipe-button ml-7 rounded px-4 py-2" onclick="checkVerificationAndSubscribe(2, 92)">Choose Plan</button>
+        </div>
+        <!-- Foreground content ends -->
+      </div>
+
+      <!-- All Acounds Included: -->
+
+      <div class="subscription-includes leading-10 mx-20 pb-20 lg:mx-0 lg:grid grid-cols-4">
+        <div>
+          <h1 class="primary-text-color w-fit">All Acounds Included:</h1>
+        </div>
+        <div class="pt-4 leading-8">
+          <p><i class="fa-solid fa-circle-check pr-1"></i>Making Group</p>
+          <p><i class="fa-solid fa-circle-check pr-1"></i>Free Support</p>
+          <p><i class="fa-solid fa-circle-check pr-1"></i>Free Recipe sharing</p>
+        </div>
+        <div class="pt-4 leading-8">
+          <p><i class="fa-solid fa-circle-check pr-1"></i>Explore Recipe</p>
+          <p><i class="fa-solid fa-circle-check pr-1"></i>Personal Profile</p>
+          <p><i class="fa-solid fa-circle-check pr-1"></i>Promoting Products</p>
+        </div>
+        <div class="pt-4 leading-8">
+          <p><i class="fa-solid fa-circle-check pr-1"></i>Buy Products</p>
+          <p><i class="fa-solid fa-circle-check pr-1"></i>Free Podcast</p>
+          <p><i class="fa-solid fa-circle-check pr-1"></i>Explore Trending & Popular Recipe's</p>
+        </div>
+      </div>
+
+      <!-- User Grap -->
+      <div class="subscription-includes leading-10 pb-20 mx-20 lg:mx-0">
+        <div>
+          <h1 class="primary-text-color w-fit">Monthly User Chart:</h1>
+        </div>
+        <div>
+          <canvas id="monthlyUserChart" width="200" height="100"></canvas>
+        </div>
+      </div>
+
+      <!-- Frequetly asked question -->
+
+      <div class="frequetly-asked-question bg-base-300 w-full rounded">
+        <h1 class="text-black text-4xl font-semibold pt-10 pl-7">Frequetly asked question</h1>
+        <div class="px-10 py-10">
+          <div class="collapse collapse-plus bg-base-200">
+            <input type="radio" name="my-accordion-3" checked="checked" />
+            <div class="collapse-title text-xl font-medium">Is we can sell our recipe here?</div>
+            <div class="collapse-content">
+              <p>
+               Not now, But you can sell your products by us.
+              </p>
+            </div>
+          </div>
+          <div class="collapse collapse-plus bg-base-200 mt-5">
+            <input type="radio" name="my-accordion-3" />
+            <div class="collapse-title text-xl font-medium">Can we get life time access?</div>
+            <div class="collapse-content">
+              <p>
+                Yes. You can get lifetime access.
+              </p>
+            </div>
+          </div>
+          <div class="collapse collapse-plus bg-base-200 mt-5">
+            <input type="radio" name="my-accordion-3" />
+            <div class="collapse-title text-xl font-medium">Can i get more than one subscription?</div>
+            <div class="collapse-content">
+              <p>
+                Yes, But you have to need extra Account.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer class="grid bg-base-100 w-full h-full">
+      <div class="px-14 mx-auto lg:grid grid-cols-12 gap-16 lg:flex justify-center items-cente py-16">
+        <div class="col-span-4">
+          <p class="btn btn-ghost text-xl p-0 montserrat-alternates-bold text-3xl font-semibold">Recipe</p>
+          <span class="font-light text-2xl primary-text-color">Hub</span>
+          <h1>Making the world a better place through constructing elegant hierarchies.</h1>
+          <div class="social-media-links flex gap-10 my-5 text-2xl">
+            <a href=""><i class="fa-brands fa-facebook"></i></a>
+            <a href=""><i class="fa-brands fa-instagram"></i></a>
+            <a href=""><i class="fa-brands fa-github"></i></a>
+            <a href=""><i class="fa-brands fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="col-span-2 leading-10">
+          <h1 class="font-semibold">Solutions</h1>
+          <p class="font-extralight">KhanaPina Deals</p>
+          <p class="font-extralight">Grocery delivery</p>
+          <p class="font-extralight">pandago for customers</p>
+          <p class="font-extralight">pandago for business</p>
+        </div>
+        <div class="col-span-2 leading-10">
+          <h1 class="font-semibold">Support</h1>
+          <p class="font-extralight">Pricing</p>
+          <p class="font-extralight">Careers</p>
+          <p class="font-extralight">Corporate Customer</p>
+          <p class="font-extralight">Dine-in</p>
+        </div>
+        <div class="col-span-2 leading-8">
+          <h1 class="font-semibold">Help Center</h1>
+          <p class="font-extralight">Privacy Policy</p>
+          <p class="font-extralight">Refund Account Terms and Conditions</p>
+          <p class="font-extralight">Cashback Program</p>
+          <p class="font-extralight">pandapro Subscription</p>
+        </div>
+        <div class="col-span-2 leading-8">
+          <h1 class="font-semibold">Terms and Conditions</h1>
+          <p class="font-extralight">Security</p>
+          <p class="font-extralight">Partner with Us</p>
+          <p class="font-extralight">How foodpanda Works</p>
+          <p class="font-extralight">Download foodpanda Apps</p>
+        </div>
+      </div>
+      <small class="text-center font-semibold bg-gray-700 h-9 text-white flex items-center justify-center">©All right reserved</small>
+    </footer>
+    <script src="./js/subscription.js"></script>
+  </body>
+</html>

@@ -1,0 +1,198 @@
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Libre+Barcode+128+Text&family=Merriweather&family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Montserrat+Alternates:ital,wght@0,700;1,600&display=swap");
+
+/* Utilities */
+.montserrat-alternates-bold {
+  font-family: "Montserrat Alternates", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.dancing-script-hub {
+  font-family: "Dancing Script", cursive;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+.primary-text-color {
+  color: #77574c;
+  border-bottom: 1px solid;
+}
+.primary-color {
+  background-color: #77574c;
+}
+/* Banner */
+.banner-image {
+  width: 100%;
+  height: 70vh;
+  margin: auto;
+  background-image: url("/assets/banner-b.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+}
+.project-feature {
+  width: 430px;
+  font-family: unit-slab, Georgia, Times, serif;
+}
+@media (max-width: 600px) {
+  .project-feature {
+    width: 100%;
+    padding: 10px;
+  }
+}
+
+/* card and trending section */
+
+.card-height-control {
+  height: 285px;
+}
+@media (max-width: 600px) {
+  .card-height-control {
+    height: 80px;
+  }
+}
+.card-text-size {
+  font-size: 1.1rem;
+}
+.trending-horizontal-line {
+  border-bottom: 1px solid #77574c;
+  margin: 10px 0px;
+}
+.trending-text {
+  font-size: 16px;
+}
+.trending-text:hover {
+  border-bottom: 1px solid #77574c;
+}
+.popular-recipe-button {
+  background-color: #77574c;
+}
+.promotion {
+  height: 390px;
+}
+.podcast-text {
+  font-size: 16.5px;
+}
+.listen-button {
+  font-size: 15px;
+}
+.audio-color-section {
+  background-color: #77574c;
+}
+@media (max-width: 600px) {
+  .audio-color-section {
+    background-color: #e8e8e8;
+  }
+}
+
+/* subscript plan */
+.border-of-plan {
+  border: 1px solid #77574c;
+}
+.price-heading-border-basic {
+  border: 1px solid #77574c;
+  border-radius: 5px;
+}
+.price-heading-border-advance {
+  border: 1px solid white;
+  border-radius: 5px;
+}
+
+/* promotions */
+#promotion {
+  background-color: white;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr); /* For small screens */
+  gap: 14px;
+  padding: 2px;
+}
+
+@media (min-width: 1024px) {
+  #promotion {
+    grid-template-columns: repeat(4, 1fr); /* For large screens */
+    padding: 16px;
+  }
+}
+
+/* For chat box style start */
+/* Smooth scrolling */
+.chat-messages {
+  scroll-behavior: smooth;
+}
+
+/* Animation for new messages */
+.new-message {
+  animation: fadeInUp 0.3s ease-in-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* For chat box style end */
+
+/* For Timeline image */
+.post-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+/* notification-dropdown */
+#notification-dropdown.hidden {
+  display: none;
+}
+
+#notification-dropdown {
+  display: block;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+/* End notification-dropdown*/
+
+.recipehub-background-text {
+  font-size: 15rem; /* Adjust the size as necessary */
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.05); /* Light text */
+  letter-spacing: 1rem;
+  text-transform: uppercase;
+  position: absolute;
+  z-index: -1;
+  white-space: nowrap;
+}
+.subscription-card {
+  background: #f0f0f0; /*Subtle light gray background for contrast */
+  padding: 50px 0;
+  border-radius: 5px;
+}
+#monthly-plan,
+#yearly-plan {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+#monthly-plan:hover,
+#yearly-plan:hover {
+  transform: scale(1.05);
+}
+button {
+  background-color: #a0522d; /* Stylish brown for buttons */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+button:hover {
+  background-color: #8b4513; /* Darker brown on hover */
+}

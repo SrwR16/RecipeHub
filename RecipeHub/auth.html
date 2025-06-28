@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="emerald">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RecipeHub</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/3b65cadd71.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="./css/auth.css">
+  </head>
+  <body>
+    <header>
+      <div class="navbar px-0 lg:px-10 bg-base-100 fixed top-0 w-full z-50">
+        <div class="navbar-start">
+          <div class="dropdown">
+            <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+              </svg>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+              <li class="font-semibold"><a href="./index.html">Home</a></li>
+              <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
+              <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
+              <li class="font-semibold"><a href="./contact.html">Support</a></li>
+            </ul>
+          </div>
+          <p class="btn btn-ghost text-xl p-0 montserrat-alternates-bold text-3xl font-semibold">Recipe</p>
+          <span class="font-light text-2xl primary-text-color">Hub</span>
+        </div>
+        <div class="navbar-center hidden lg:flex">
+          <ul class="menu menu-horizontal px-1">
+            <li class="font-semibold"><a href="./index.html">Home</a></li>
+            <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
+            <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
+            <li class="font-semibold"><a href="./contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="navbar-end gap-10">
+          <div class="indicator">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              />
+            </svg>
+            <span class="badge badge-xs indicator-item" style="background-color: #77574c"></span>
+          </div>
+          <div class="pr-5 lg:pr-0">
+            <a href="./auth.html" class="btn text-white" style="background-color: #77574c">Login</a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="bg-base-200 lg:px-52 py-8 pt-16 h-full">
+        <section class="forms-section">
+            <h1 class="section-title">Login or Signup Here</h1>
+            <div class="forms">
+              <div class="form-wrapper is-active">
+                <button type="button" class="switcher switcher-login">
+                  Login
+                  <span class="underline"></span>
+                </button>
+                <form onsubmit="login(event)"  enctype="multipart/form-data" class="form form-login login-height-control relative leading-10 px-10">
+                  <fieldset>
+                    <legend>Please, enter your email and password for login.</legend>
+                    <div class="input-block">
+                      <label for="login-email">E-mail</label>
+                      <input id="email" type="email" required>
+                    </div>
+                    <div class="input-block">
+                      <label for="login-password">Password</label>
+                      <input id="password" type="password" required>
+                    </div>
+                  </fieldset>
+                  <button type="submit" class="btn-login absolute bottom-4">Login</button>
+                </form>
+              </div>
+              <div class="form-wrapper">
+                <button type="button" class="switcher switcher-signup">
+                  Sign Up
+                  <span class="underline"></span>
+                </button>
+                <form class="form form-signup reg-height-control relative leading-10 px-10">
+                  <fieldset>
+                    <legend>Please, enter your email, password and password confirmation for sign up.</legend>
+                    <div class="input-block">
+                      <label for="signup-username">Username</label>
+                      <input id="signup-username" type="text" required>
+                    </div>
+                    <div class="input-block">
+                      <label for="signup-email">E-mail</label>
+                      <input id="signup-email" type="email" required>
+                    </div>
+                    <div class="input-block">
+                      <label for="signup-password">Password</label>
+                      <input id="signup-password" type="password" required>
+                    </div>
+                  </fieldset>
+                  <button type="submit" class="btn-signup absolute bottom-4">Sign Up</button>
+                </form>                
+              </div>
+            </div>
+          </section>
+    </main>
+    <footer class="grid bg-base-100 w-full h-full">
+      <div class="px-14 mx-auto lg:grid grid-cols-12 gap-16 lg:flex justify-center items-cente py-16">
+        <div class="col-span-4">
+          <p class="btn btn-ghost text-xl p-0 montserrat-alternates-bold text-3xl font-semibold">Recipe</p>
+          <span class="font-light text-2xl primary-text-color">Hub</span>
+          <h1>Making the world a better place through constructing elegant hierarchies.</h1>
+          <div class="social-media-links flex gap-10 my-5 text-2xl">
+            <a href=""><i class="fa-brands fa-facebook"></i></a>
+            <a href=""><i class="fa-brands fa-instagram"></i></a>
+            <a href=""><i class="fa-brands fa-github"></i></a>
+            <a href=""><i class="fa-brands fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="col-span-2 leading-10">
+          <h1 class="font-semibold">Solutions</h1>
+          <p class="font-extralight">KhanaPina Deals</p>
+          <p class="font-extralight">Grocery delivery</p>
+          <p class="font-extralight">pandago for customers</p>
+          <p class="font-extralight">pandago for business</p>
+        </div>
+        <div class="col-span-2 leading-10">
+          <h1 class="font-semibold">Support</h1>
+          <p class="font-extralight">Pricing</p>
+          <p class="font-extralight">Careers</p>
+          <p class="font-extralight">Corporate Customer</p>
+          <p class="font-extralight">Dine-in</p>
+        </div>
+        <div class="col-span-2 leading-8">
+          <h1 class="font-semibold">Help Center</h1>
+          <p class="font-extralight">Privacy Policy</p>
+          <p class="font-extralight">Refund Account Terms and Conditions</p>
+          <p class="font-extralight">Cashback Program</p>
+          <p class="font-extralight">pandapro Subscription</p>
+        </div>
+        <div class="col-span-2 leading-8">
+          <h1 class="font-semibold">Terms and Conditions</h1>
+          <p class="font-extralight">Security</p>
+          <p class="font-extralight">Partner with Us</p>
+          <p class="font-extralight">How foodpanda Works</p>
+          <p class="font-extralight">Download foodpanda Apps</p>
+        </div>
+      </div>
+      <small class="text-center font-semibold bg-gray-700 h-9 text-white flex items-center justify-center">©All right reserved</small>
+    </footer>
+    <script src="./js/auth.js"></script>
+  </body>
+</html>
