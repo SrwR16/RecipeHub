@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="emerald">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RecipeHub</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/3b65cadd71.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <header>
+      <div class="navbar px-0 lg:px-10 bg-base-100 fixed top-0 w-full z-50">
+        <div class="navbar-start">
+          <div class="dropdown">
+            <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+              </svg>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+              <li class="font-semibold"><a href="./index.html">Home</a></li>
+              <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
+              <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
+              <li class="font-semibold"><a href="./contact.html">Support</a></li>
+            </ul>
+          </div>
+          <p class="btn btn-ghost text-xl p-0 montserrat-alternates-bold text-3xl font-semibold">Recipe</p>
+          <span class="font-light text-2xl primary-text-color">Hub</span>
+        </div>
+        <div class="navbar-center hidden lg:flex">
+          <ul class="menu menu-horizontal px-1">
+            <li class="font-semibold"><a href="./index.html">Home</a></li>
+            <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
+            <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
+            <li class="font-semibold"><a href="./contact.html">Support</a></li>
+          </ul>
+        </div>
+        <!----- Maste Chef ----->
+        <a
+          href="./masterChef.html"
+          class="btn btn-primary flex items-center gap-2 bg-gradient-to-r from-blue-500 to-green-500 border-none text-white px-4 py-2 rounded-full hover:scale-105 transition-transform"
+        >
+          Master Chefs AI
+        </a>
+        <div class="navbar-end gap-5 flex justify-items-center">
+          <div class="indicator">
+            <a href="chat.html">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 8v12a2 2 0 002 2h14a2 2 0 002-2V8M3 8l9 5 9-5M3 8l9 5 9-5M3 8h18"
+                />
+              </svg>
+            </a>
+            <span class="badge badge-xs indicator-item" style="background-color: #77574c"></span>
+          </div>
+          <div id="login-control" class="pr-5 lg:pr-0"></div>
+        </div>
+      </div>
+    </header>
+    <main class="bg-base-200 lg:px-52 py-8 pt-16">
+      <div class="banner">
+        <div class="banner-image lg:relative sm:w-100%"></div>
+        <div id="banner-title" class="project-feature lg:absolute lg:top-1/3 lg:start-60 bg-base-100 lg:px-8 px-3 h-fit"></div>
+      </div>
+
+      <div class="popular-recipe-section lg:pt-16 pt-5">
+        <h1 class="text-4xl pb-10 px-3 lg:px-0">Popular recipe collections...</h1>
+      </div>
+
+      <div class="lg:grid grid-cols-12 gap-x-3 lg:px-0 leading-10">
+        <!-- Popular Recipe -->
+
+        <div class="lg:col-span-9 flex items-center flex-wrap gap-10 lg:gap-4" id="recipe-container">
+          <!-- Recipe cards will be dynamically inserted here -->
+        </div>
+
+        <!-- Trending Now Recipe -->
+
+        <div class="lg:col-span-3 w-full lg:p-0 p-3 pt-10 lg:pt-0">
+          <h1 class="text-3xl lg:text-2xl pb-3 font-semibold">Trending Now..</h1>
+          <div id="trending"></div>
+          <button class="btn-neutral popular-recipe-button text-xl w-full py-2"><a href="./timeline.html">More popular recipes</a></button>
+        </div>
+      </div>
+
+      <div class="w-full bg-base-100 h-20 my-9 flex justify-center items-center">
+        <button class="btn-neutral primary-color p-3 rounded"><a href="./timeline.html">More recipe collections</a></button>
+      </div>
+
+      <div class="popular-recipe-section lg:py-7 pt-5">
+        <h1 class="text-4xl px-3 lg:px-0">Latest offers and promotions...</h1>
+      </div>
+
+      <!-- Lates offer and promotions start-->
+      <div id="promotion"></div>
+      <!-- Lates offer and promotions end-->
+
+      <!-- Podcast start -->
+      <div class="pt-16 h-5/6 w-fit px-3 lg:px-0">
+        <p class="text-4xl pb-4">Recipe<span class="font-light text-3xl primary-text-color">Hub</span> Premium Podcast</p>
+        <p class="podcast-text">Tune in to the latest episodes to hear our experts discuss all things food.</p>
+        <div class="py-10 grid grid-cols-12 lg:px-10">
+          <div class="col-span-12 lg:col-span-8">
+            <div class="flex flex-wrap gap-10" id="podcast-container">
+              <!-- Podcast Items will be injected here -->
+            </div>
+          </div>
+          <div class="audio-color-section col-span-12 lg:col-span-4 rounded pt-10 lg:pt-0 relative">
+            <div class="popular-recipe-button col-span-4 rounded">
+              <div class="px-10">
+                <h1 class="text-center text-base-100 text-3xl py-7">
+                  RecipeHub <span class="primary-text-color text-base-100 text-semibold">Free</span> Podcast
+                </h1>
+                <div id="podcast-episode"></div>
+              </div>
+              <button class="btn btn-neutral w-full rounded-none absolute bottom-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+                Listen to more episodes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Podcast end -->
+
+      <!-- SignUp start -->
+      <div class="never-miss-recipe h-fit bg-base-300 leading-10 pt-4 pb-6">
+        <div class="flex text-center flex-col">
+          <h1 class="text-3xl py-5">Never miss a recipe from Good Food</h1>
+          <p>Sign up to receive our weekly newsletter.</p>
+          <div class="flex justify-center gap-3 py-5">
+            <label class="input input-bordered flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
+                <path
+                  d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z"
+                />
+                <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
+              </svg>
+              <input type="text" class="grow w-96" placeholder="Email" />
+            </label>
+            <button class="btn-neutral popular-recipe-button py-1 px-14 rounded"><a href="#">Sign me up!</a></button>
+          </div>
+          <p>
+            By entering your details, you are agreeing to our <a class="primary-text-color" href="">terms and conditions</a> and
+            <a class="primary-text-color" href="">privacy policy</a>. You can unsubscribe at any time.
+          </p>
+        </div>
+      </div>
+      <!-- SignUp end -->
+    </main>
+    <footer class="grid bg-base-100 w-full h-full">
+      <div class="px-14 mx-auto lg:grid grid-cols-12 gap-16 lg:flex justify-center items-cente py-16">
+        <div class="col-span-4">
+          <p class="btn btn-ghost text-xl p-0 montserrat-alternates-bold text-3xl font-semibold">Recipe</p>
+          <span class="font-light text-2xl primary-text-color">Hub</span>
+          <h1>Making the world a better place through constructing elegant hierarchies.</h1>
+          <div class="social-media-links flex gap-10 my-5 text-2xl">
+            <a href=""><i class="fa-brands fa-facebook"></i></a>
+            <a href=""><i class="fa-brands fa-instagram"></i></a>
+            <a href=""><i class="fa-brands fa-github"></i></a>
+            <a href=""><i class="fa-brands fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="col-span-2 leading-10">
+          <h1 class="font-semibold">Solutions</h1>
+          <p class="font-extralight">KhanaPina Deals</p>
+          <p class="font-extralight">Grocery delivery</p>
+          <p class="font-extralight">pandago for customers</p>
+          <p class="font-extralight">pandago for business</p>
+        </div>
+        <div class="col-span-2 leading-10">
+          <h1 class="font-semibold">Support</h1>
+          <p class="font-extralight">Pricing</p>
+          <p class="font-extralight">Careers</p>
+          <p class="font-extralight">Corporate Customer</p>
+          <p class="font-extralight">Dine-in</p>
+        </div>
+        <div class="col-span-2 leading-8">
+          <h1 class="font-semibold">Help Center</h1>
+          <p class="font-extralight">Privacy Policy</p>
+          <p class="font-extralight">Refund Account Terms and Conditions</p>
+          <p class="font-extralight">Cashback Program</p>
+          <p class="font-extralight">pandapro Subscription</p>
+        </div>
+        <div class="col-span-2 leading-8">
+          <h1 class="font-semibold">Terms and Conditions</h1>
+          <p class="font-extralight">Security</p>
+          <p class="font-extralight">Partner with Us</p>
+          <p class="font-extralight">How foodpanda Works</p>
+          <p class="font-extralight">Download foodpanda Apps</p>
+        </div>
+      </div>
+      <small class="text-center font-semibold bg-gray-700 h-9 text-white flex items-center justify-center">©All right reserved</small>
+    </footer>
+    <script src="./js/app.js"></script>
+    <script src="./js/home.js"></script>
+  </body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="emerald">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RecipeHub</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/3b65cadd71.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <style>
+      /* Ensure consistent styling for the pre element */
+      pre {
+        color: #2d3748; /* Match your desired text color */
+        font-family: inherit; /* Use the same font as the rest of the page */
+        font-size: 1rem; /* Adjust font size to match your design */
+        overflow-x: auto; /* Add horizontal scrolling if needed */
+        overflow-y: auto; /* Add vertical scrolling if needed */
+        white-space: pre-wrap; /* Wrap long text to avoid horizontal scrolling */
+        background-color: transparent; /* Ensure no background mismatch */
+        margin: 0; /* Remove default margin */
+        padding: 1rem; /* Add padding for better readability */
+      }
+
+      /* Style the section that contains the pre element */
+      section {
+        background-color: #f9f9f9; /* Ensure the same background as the rest of the page */
+        padding: 1rem; /* Adjust padding to fit your design */
+      }
+
+      #responseModal {
+        z-index: 50;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="navbar px-0 lg:px-10 bg-base-100 fixed top-0 w-full z-50">
+        <div class="navbar-start">
+          <div class="dropdown">
+            <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+              </svg>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+              <li class="font-semibold"><a href="./index.html">Home</a></li>
+              <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
+              <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
+              <li class="font-semibold"><a href="./contact.html">Support</a></li>
+            </ul>
+          </div>
+          <p class="btn btn-ghost text-xl p-0 montserrat-alternates-bold text-3xl font-semibold">Recipe</p>
+          <span class="font-light text-2xl primary-text-color">Hub</span>
+        </div>
+        <div class="navbar-center hidden lg:flex">
+          <ul class="menu menu-horizontal px-1">
+            <li class="font-semibold"><a href="./index.html">Home</a></li>
+            <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
+            <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
+            <li class="font-semibold"><a href="./contact.html">Support</a></li>
+          </ul>
+        </div>
+        <div class="navbar-end gap-5 flex justify-items-center">
+          <!------- Chat Icon--------->
+          <div class="indicator">
+            <a href="chat.html">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 8v12a2 2 0 002 2h14a2 2 0 002-2V8M3 8l9 5 9-5M3 8l9 5 9-5M3 8h18"
+                />
+              </svg>
+            </a>
+            <span class="badge badge-xs indicator-item" style="background-color: #77574c"></span>
+          </div>
+
+          <div id="login-control" class="pr-5 lg:pr-0"></div>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex">
+      <!-- Sidebar -->
+      <aside class="w-1/4 bg-white border-r border-gray-300 overflow-y-auto">
+        <div class="p-4 pt-24">
+          <h2 class="text-xl font-bold text-gray-800 mb-4">Your Conversations</h2>
+          <ul id="humanTextList" class="space-y-2">
+            <!-- Dynamic list items will be appended here -->
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <section class="flex-1 pt-32">
+        <div class="text-center">
+          <h1 class="text-4xl font-bold text-gray-800 mb-6">Ask your recipe - AI Master Chef</h1>
+          <div class="flex items-center justify-center space-x-4">
+            <input
+              type="text"
+              placeholder="What are you craving for?"
+              class="w-96 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              id="humanText"
+            />
+            <button class="btn text-white w-28 h-9" style="background-color: #77574c" onclick="loadChef(event)">Ask</button>
+          </div>
+        </div>
+        <div class="w-9/12 m-auto pt-16">
+          <pre id="ai_response"></pre>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal for Showing AI Response -->
+    <div id="responseModal" class="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+      <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+        <button class="text-gray-500 hover:text-gray-800 float-right" onclick="closeModal()">&times;</button>
+        <h3 class="text-xl font-bold text-gray-800 mb-4">AI Response</h3>
+        <p id="modalContent" class="text-gray-700"></p>
+      </div>
+    </div>
+
+    <script src="./js/masterChef.js"></script>
+  </body>
+</html>
