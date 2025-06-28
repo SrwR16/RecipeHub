@@ -12,7 +12,7 @@ const getUser = () => {
   }
 };
 
-const ws = new WebSocket(`ws://127.0.0.1:8000/ws/notifications/`);
+const ws = new WebSocket(`ws://localhost/ws/notifications/`);
 
 ws.onopen = function (event) {
   console.log("Websocket connection open...");
@@ -98,7 +98,7 @@ function toggleComments(button, recipeID) {
   // Only fetch comments if the section is being opened
   if (isHidden) {
     console.log("Recipe ID:", recipeID);
-    fetch("http://127.0.0.1:8000/comment/list/")
+    fetch("/api/comment/list/")
       .then((res) => res.json())
       .then((data) => {
         // Clear previous comments (if any)
@@ -111,7 +111,9 @@ function toggleComments(button, recipeID) {
                       <div id="comment-${item.id}" class="bg-gray-100 p-2 rounded-lg">
                           <div class="flex justify-between">
                               <span class="font-semibold">${item.username}</span>
-                              <span class="text-gray-500 text-sm">${new Date(item.creation_date).toLocaleString()}</span>
+                              <span class="text-gray-500 text-sm">${new Date(
+                                item.creation_date
+                              ).toLocaleString()}</span>
                               <button class="text-red-500 hover:text-red-700" onclick="deleteComment(${item.id})">
                                   <i class="fas fa-trash"></i>
                               </button>
@@ -130,7 +132,7 @@ function toggleComments(button, recipeID) {
 
 async function fetchGroups() {
   try {
-    const response = await fetch("http://127.0.0.1:8000/chat/group/");
+    const response = await fetch("/api/chat/group/");
     if (!response.ok) throw new Error("Network response was not ok");
     const groups = await response.json();
 
@@ -165,7 +167,7 @@ async function addGroup() {
 
   if (groupName) {
     try {
-      const response = await fetch("http://127.0.0.1:8000/chat/group/", {
+      const response = await fetch("/api/chat/group/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -229,7 +231,7 @@ const postSubmit = (event) => {
   }
 
   try {
-    fetch("http://127.0.0.1:8000/kitchen/post/", {
+    fetch("/api/kitchen/post/", {
       method: "POST",
       body: formData,
     })
@@ -250,7 +252,7 @@ const postSubmit = (event) => {
 
 // For post to view in timeline
 const allPost = () => {
-  fetch("http://127.0.0.1:8000/kitchen/post/")
+  fetch("/api/kitchen/post/")
     .then((res) => res.json())
     .then((data) =>
       data.forEach((item) => {
@@ -276,17 +278,17 @@ const displayPost = (item) => {
             <h2 class="font-bold">${item.username}</h2>
             <span class="text-gray-500 text-sm">${creationDate}</span>
         </div>
-  
+
         <h1 class="mt-2 text-2xl font-semibold text-gray-800">${item.title}</h1>
         <p class="mt-4 font-light text-gray-600 leading-relaxed">${item.ingredients}</p>
-        
+
         <div class="mt-4">
             <p class="font-medium text-gray-800">Flavour: <a href="#" class="hover:underline">${item.flavour}</a></p>
             <p class="font-medium text-gray-800">Region: <a href="#" class="hover:underline">${item.region}</a></p>
             <p class="font-medium text-gray-800">Season: <a href="#" class="hover:underline">${item.seasonal}</a></p>
         </div>
         <img src="${item.media}" alt="Post Image" class="post-image w-full rounded-lg mt-2" />
-  
+
         <!-- Action Buttons -->
         <div class="mt-4 flex justify-between text-gray-600 space-x-0">
           <button class="flex items-center hover:text-gray-800 transition primary-text-color" onclick="toggleReaction(${item.id}, ${item.user})">
@@ -299,12 +301,12 @@ const displayPost = (item) => {
               <i class="fas fa-trash-alt mr-1"></i> Delete
           </button>
         </div>
-  
+
         <!-- Comments Section -->
         <div class="comment-section mt-4 space-y-2 hidden">
             <!-- Comments will be appended here -->
         </div>
-  
+
         <!-- Comment Input Field -->
         <div class="flex mt-2">
             <input id="comment-text-${item.id}" type="text" placeholder="Write a comment..." class="w-full p-2 border border-gray-300 rounded-lg" />
@@ -321,7 +323,7 @@ const deletePost = (postId) => {
   console.log(postId);
   const postElement = document.getElementById(`post-${postId}`);
   if (postElement) {
-    fetch(`http://127.0.0.1:8000/kitchen/post/${postId}/`, { method: "DELETE" })
+    fetch(`/api/kitchen/post/${postId}/`, { method: "DELETE" })
       .then((response) => {
         if (!response.ok) throw new Error("Failed to delete post");
       })
@@ -347,7 +349,7 @@ function postComment(recipeID) {
     recipe: recipeID,
   };
 
-  fetch("http://127.0.0.1:8000/comment/list/", {
+  fetch("/api/comment/list/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -358,7 +360,7 @@ function postComment(recipeID) {
     .then((data) => (commentText.value = ""));
 }
 const deleteComment = (commentID) => {
-  fetch(`http://127.0.0.1:8000/comment/list/${commentID}/`, {
+  fetch(`/api/comment/list/${commentID}/`, {
     method: "DELETE",
     headers: {
       "content-type": "application/json",

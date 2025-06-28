@@ -2,15 +2,37 @@ const urlParams = new URLSearchParams(window.location.search);
 const id = urlParams.get("id");
 
 const loadBanner = () => {
-  fetch(`http://127.0.0.1:8000/banner/title/?id=${id}`)
-    .then((res) => res.json())
-    .then((data) => displayBanner(data))
-    .catch((error) => console.error("Error fetching banner data:", error));
+  // Only fetch banner with id if id is not null
+  if (id && id !== "null") {
+    fetch(`/api/banner/title/?id=${id}`)
+      .then((res) => res.json())
+      .then((data) => displayBanner(data))
+      .catch((error) => console.error("Error fetching banner data:", error));
+  } else {
+    // If no id, fetch all banners and display the first one
+    fetch("/api/banner/title/")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.length > 0) {
+          displayBanner(data);
+        }
+      })
+      .catch((error) => console.error("Error fetching banner data:", error));
+  }
 };
 
 const displayBanner = (data) => {
   const parent = document.getElementById("banner-title");
+  if (!parent) return; // Exit if element doesn't exist
+
   parent.innerHTML = ""; // Clear previous content
+
+  // Check if data exists and has content
+  if (!data || data.length === 0) {
+    console.log("No banner data available");
+    return;
+  }
+
   const div = document.createElement("div");
   div.innerHTML = `
       <h1 class="text-3xl py-4"><a href="#">${data[0].title}</a></h1>
@@ -28,7 +50,7 @@ const displayBanner = (data) => {
 
 // IIFE - immediately Invoked Function Expression
 (function () {
-  fetch("http://127.0.0.1:8000/banner/title/")
+  fetch("/api/banner/title/")
     .then((res) => res.json())
     .then((data) => {
       if (data.length > 0) {
@@ -48,7 +70,7 @@ const displayBanner = (data) => {
 })();
 
 const promotion = () => {
-  fetch("http://127.0.0.1:8000/promotions/list/")
+  fetch("/api/promotions/list/")
     .then((res) => res.json())
     .then((data) => {
       data.forEach((item) => {
@@ -65,7 +87,7 @@ const displayPromotion = (item) => {
   const description = item.description.split(" ").slice(0, 6).join(" ");
 
   div.classList.add("w-full", "h-full", "promotion", "bg-base-100", "p-4");
-  div.innerHTML = ` 
+  div.innerHTML = `
     <div class="w-full h-full relative">
       <div class="w-full h-48 overflow-hidden">
         <img src="${item.image}" alt="" class="w-full h-full object-cover" />
@@ -80,7 +102,7 @@ const displayPromotion = (item) => {
 };
 
 const podcast = () => {
-  fetch("http://127.0.0.1:8000/podcast/episode/list/normal/")
+  fetch("/api/podcast/episode/list/normal/")
     .then((res) => res.json())
     .then((data) => {
       data.forEach((item, index) => {
@@ -124,7 +146,7 @@ const sendingIDtoorderPage = (orderProductID) => {
 };
 
 const fetchPodcastData = () => {
-  fetch("http://127.0.0.1:8000/podcast/premium/")
+  fetch("/api/podcast/premium/")
     .then((response) => response.json())
     .then((data) => {
       data.forEach((podcast) => {
@@ -135,10 +157,10 @@ const fetchPodcastData = () => {
 };
 
 const verificationCheck = async () => {
-  const res = await fetch("http://127.0.0.1:8000/chat/profile/");
+  const res = await fetch("/api/chat/profile/");
   const data = await res.json();
   const userId = localStorage.getItem("user_id");
-  const userProfile = data.find(item => item.user.id == userId);
+  const userProfile = data.find((item) => item.user.id == userId);
   if (userProfile) {
     return userProfile.verified;
   }

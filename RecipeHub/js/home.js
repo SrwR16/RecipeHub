@@ -1,5 +1,7 @@
 const navBar = () => {
   const login = document.getElementById("login-control");
+  if (!login) return; // Exit if element doesn't exist
+
   const token = localStorage.getItem("tokens");
   const tokens = JSON.parse(token);
   if (tokens) {
@@ -15,34 +17,44 @@ const navBar = () => {
 };
 
 const loadPostForTrending = () => {
-  fetch("http://127.0.0.1:8000/kitchen/post/")
+  fetch("/api/kitchen/post/")
     .then((res) => res.json())
     .then((data) => {
       const winterRecipes = data.filter((item) => item.seasonal === "Winter");
       displayTrendingData(winterRecipes);
     })
-    .catch((err) => console.error("Error fetching data:", err));
+    .catch((err) => console.error("Error fetching trending data:", err));
 };
 
 const displayTrendingData = (items) => {
   const trend = document.getElementById("trending");
+  if (!trend) return; // Exit if element doesn't exist
+
   // Clear previous content
   trend.innerHTML = "";
+
+  if (!items || items.length === 0) {
+    trend.innerHTML = "<p>No trending recipes available</p>";
+    return;
+  }
+
   items.forEach((item) => {
     trend.innerHTML += `
             <a class="trending-text" href="recipe.html?recipeId=${item.id}">${item.title}</a>
-            
             <hr class="trending-horizontal-line" />
         `;
   });
 };
 
-document.addEventListener("DOMContentLoaded", loadPostForTrending);
-
 const popularRecipeCount = () => {
-  fetch("http://127.0.0.1:8000/comment/react/list/")
+  fetch("/api/comment/react/list/")
     .then((res) => res.json())
     .then((data) => {
+      if (!data || data.length === 0) {
+        console.log("No reaction data available");
+        return;
+      }
+
       // Create a map to count occurrences of each recipe_id
       const recipeCount = {};
       data.forEach((item) => {
@@ -56,12 +68,17 @@ const popularRecipeCount = () => {
       const popularRecipes = Object.keys(recipeCount).filter((recipeId) => recipeCount[recipeId] >= 3);
       getPopularRecipe(popularRecipes);
     })
-    .catch((error) => console.error("Error fetching data:", error));
+    .catch((error) => console.error("Error fetching reaction data:", error));
 };
 
 const getPopularRecipe = (recipeIdObject) => {
+  if (!recipeIdObject || recipeIdObject.length === 0) {
+    console.log("No popular recipes found");
+    return;
+  }
+
   const recipeIds = Object.values(recipeIdObject);
-  fetch("http://127.0.0.1:8000/kitchen/post/")
+  fetch("/api/kitchen/post/")
     .then((res) => res.json())
     .then((data) => {
       // Filter the recipes whose recipe IDs match the extracted recipeIds
@@ -73,12 +90,20 @@ const getPopularRecipe = (recipeIdObject) => {
 
 const displayPopularRecipe = (recipes) => {
   const container = document.querySelector(".lg\\:col-span-9");
+  if (!container) return; // Exit if element doesn't exist
+
   container.innerHTML = "";
+
+  if (!recipes || recipes.length === 0) {
+    container.innerHTML = "<p>No popular recipes available</p>";
+    return;
+  }
+
   recipes.forEach((recipe) => {
     const recipeCard = `
             <div class="bg-base-100 w-full lg:w-56 card-height-control relative" data-recipe-id="${recipe.id}">
               <div class="w-full h-48 overflow-hidden hidden lg:block">
-                <img class="h-full w-full object-cover" src="${recipe.media}" alt="${recipe.title}" />
+                <img class="h-full w-full object-cover" src="${recipe.media || ""}" alt="${recipe.title}" />
               </div>
               <div class="absolute bottom-0 card-text-size px-3 pb-5 lg:pb-3 font-semibold">
                 <a href="recipe.html?recipeId=${recipe.id}">${recipe.title}</a>
@@ -95,5 +120,10 @@ const logout = () => {
   localStorage.removeItem("user_id");
   window.location.href = "auth.html";
 };
-navBar();
-popularRecipeCount();
+
+// Initialize everything when DOM is loaded
+document.addEventListener("DOMContentLoaded", () => {
+  navBar();
+  loadPostForTrending();
+  popularRecipeCount();
+});

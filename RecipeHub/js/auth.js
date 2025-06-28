@@ -7,51 +7,68 @@ switchers.forEach((item) => {
 });
 
 const navBar = () => {
-  const login = document.getElementById('login-control')
+  const login = document.getElementById("login-control");
+  if (!login) return;
+
   const token = localStorage.getItem("tokens");
   const tokens = JSON.parse(token);
   if (tokens) {
     login.innerHTML = `
     <a href="profile.html" class="btn text-white" style="background-color: #77574c">Profile</a>
     <a onclick="logout()" class="btn text-white" style="background-color: #77574c">Logout</a>
-    `
-  } 
-  else {
+    `;
+  } else {
     login.innerHTML = `
     <a href="./auth.html" class="btn text-white" style="background-color: #77574c">Login</a>
-    `
+    `;
   }
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  const signupForm = document.querySelector('.form-signup');
-  signupForm.addEventListener('submit', (event) => {
+  navBar();
+
+  const signupForm = document.querySelector(".form-signup");
+  signupForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const username = document.getElementById("signup-username").value;
     const email = document.getElementById("signup-email").value;
     const password = document.getElementById("signup-password").value;
+
+    console.log("Form values:", { username, email, password });
+
     const userData = {
       username: username,
       email: email,
       password: password,
     };
-    fetch("http://127.0.0.1:8000/user/list/", {
+
+    console.log("Sending userData:", userData);
+
+    fetch("/api/user/list/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(userData),
     })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then((data) => {
-      alert('Sign Up Successful!');
-      window.location.href = "auth.html";
-    })
+      .then((response) => {
+        console.log("Response status:", response.status);
+        if (!response.ok) {
+          return response.json().then((errorData) => {
+            console.log("Error response:", errorData);
+            throw new Error("Network response was not ok");
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Success response:", data);
+        alert("Sign Up Successful!");
+        window.location.href = "auth.html";
+      })
+      .catch((error) => {
+        console.error("Registration error:", error);
+      });
   });
 });
 
@@ -63,7 +80,7 @@ const login = (event) => {
     email,
     password,
   };
-  fetch("http://127.0.0.1:8000/auth/token/", {
+  fetch("/api/auth/token/", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(info),
@@ -78,9 +95,9 @@ const login = (event) => {
         localStorage.setItem("tokens", JSON.stringify(tokens));
         const token_seizer = data.access.split(".");
         const tokenPayload = JSON.parse(atob(token_seizer[1]));
-        localStorage.setItem("user_id", tokenPayload.user_id)
+        localStorage.setItem("user_id", tokenPayload.user_id);
         console.log(tokenPayload.username);
-        alert('Login Successfully!')
+        alert("Login Successfully!");
         window.location.href = "index.html";
       } else {
         throw new Error("Access or refresh token missing in the response");
@@ -98,7 +115,7 @@ const updateToken = (refresh) => {
   const info = {
     refresh,
   };
-  fetch("http://127.0.0.1:8000/auth/token/refresh/", {
+  fetch("/api/auth/token/refresh/", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(info),
@@ -138,9 +155,8 @@ const getValue = (id) => {
 };
 
 const logout = () => {
-  alert("Logout Successfully")
+  alert("Logout Successfully");
   localStorage.removeItem("tokens");
   localStorage.removeItem("user_id");
-  window.location.href = "auth.html"
-}
-navBar();
+  window.location.href = "auth.html";
+};

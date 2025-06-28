@@ -21,7 +21,6 @@ const logout = () => {
   window.location.href = "auth.html";
 };
 
-
 const loadChef = (event) => {
   event.preventDefault();
   const humanPrompt = document.getElementById("humanText").value;
@@ -30,7 +29,7 @@ const loadChef = (event) => {
     user: localStorage.getItem("user_id"),
   };
 
-  fetch("http://127.0.0.1:8000/ai/chef/", {
+  fetch("/api/ai/chef/", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(info),
@@ -55,7 +54,7 @@ function saveTheResponseTotheModel(data) {
     ai_response: data.ai_response,
   };
 
-  fetch("http://127.0.0.1:8000/ai/response/", {
+  fetch("/api/ai/response/", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(info_response),
@@ -73,7 +72,7 @@ function saveTheResponseTotheModel(data) {
 // Load Conversations for Chatting App
 async function loadConversations() {
   try {
-    const response = await fetch("http://127.0.0.1:8000/ai/response/");
+    const response = await fetch("/api/ai/response/");
     if (!response.ok) throw new Error("Failed to fetch conversations");
 
     const data = await response.json();
@@ -93,7 +92,7 @@ async function loadConversations() {
       if (instance_human.user === parseInt(localStorage.getItem("user_id"))) {
         const li = document.createElement("li");
         li.className = "p-2 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer";
-        if(conversation.instance_human.user==localStorage.getItem("user_id")){
+        if (conversation.instance_human.user == localStorage.getItem("user_id")) {
           li.textContent = instance_human.text;
         }
 

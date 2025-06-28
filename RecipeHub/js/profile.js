@@ -1,7 +1,7 @@
 const userId = localStorage.getItem("user_id");
 var profile_id = 1;
 const loadProfile = () => {
-  fetch(`http://127.0.0.1:8000/chat/profile/`)
+  fetch(`/api/chat/profile/`)
     .then((res) => res.json())
     .then((data) => {
       data.forEach((item) => {
@@ -36,7 +36,7 @@ const profileUpdate = (event) => {
   if (profilePicture) {
     formData.append("image", profilePicture);
   }
-  fetch(`http://127.0.0.1:8000/chat/profile/${profile_id}/`, {
+  fetch(`/api/chat/profile/${profile_id}/`, {
     method: "PATCH",
     body: formData,
   })
@@ -67,7 +67,7 @@ const navBar = () => {
 };
 
 const orderShow = () => {
-  fetch("http://127.0.0.1:8000/order/list/")
+  fetch("/api/order/list/")
     .then((res) => res.json())
     .then((data) =>
       data.forEach((item) => {
@@ -88,18 +88,20 @@ const displayOrderData = (item) => {
                     <p class="text-lg font-semibold">Pay Reason:</p>
                     <p class="text-gray-500">${item.pay_reason}</p>
                 </div>
-  
+
                 <!-- Payment Date -->
                 <div class="mb-4 lg:mb-0 lg:flex-1">
                     <p class="text-lg font-semibold">Payment Date:</p>
                     <p class="text-gray-500">${new Date(item.payment_date).toLocaleString()}</p>
                 </div>
-  
+
                 <!-- Payment Status -->
                 <div class="mb-4 lg:mb-0 lg:flex-1">
                     <p class="text-lg font-semibold">Payment Status:</p>
                     <p class="text-gray-500">
-                        <span class="px-3 py-1 rounded-full ${item.is_payment ? "bg-green-500" : "bg-red-500"} text-white text-sm">
+                        <span class="px-3 py-1 rounded-full ${
+                          item.is_payment ? "bg-green-500" : "bg-red-500"
+                        } text-white text-sm">
                             ${item.is_payment ? "Paid" : "Unpaid"}
                         </span>
                     </p>

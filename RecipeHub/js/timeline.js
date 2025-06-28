@@ -10,7 +10,7 @@ const getUser = () => {
   }
 };
 
-const ws = new WebSocket(`ws://127.0.0.1:8000/ws/notifications/`);
+const ws = new WebSocket(`ws://localhost/ws/notifications/`);
 
 ws.onopen = function (event) {
   console.log("Websocket connection open...");
@@ -80,7 +80,7 @@ const checkIfUserLiked = async (recipeId) => {
   const from_userId = localStorage.getItem("user_id");
 
   try {
-    const res = await fetch("http://127.0.0.1:8000/comment/react/list/");
+    const res = await fetch("/api/comment/react/list/");
     const data = await res.json();
 
     // Check if this user has already liked the recipe
@@ -130,7 +130,7 @@ function toggleComments(button, recipeID) {
   // Only fetch comments if the section is being opened
   if (isHidden) {
     console.log("Recipe ID:", recipeID);
-    fetch("http://127.0.0.1:8000/comment/list/")
+    fetch("/api/comment/list/")
       .then((res) => res.json())
       .then((data) => {
         // Clear previous comments (if any)
@@ -163,7 +163,7 @@ function toggleComments(button, recipeID) {
 
 async function fetchGroups() {
   try {
-    const response = await fetch("http://127.0.0.1:8000/chat/group/");
+    const response = await fetch("/api/chat/group/");
     if (!response.ok) throw new Error("Network response was not ok");
     const groups = await response.json();
 
@@ -175,21 +175,20 @@ async function fetchGroups() {
 
     // Populate the group list
     groups.forEach((group) => {
-        // console.log(group);
+      // console.log(group);
       const li = document.createElement("li");
       li.className = "border-b pb-2";
 
       const anchor = document.createElement("a");
       anchor.href = `http://127.0.0.1:5501/chat.html?group_name=${encodeURIComponent(group.group_name)}`;
-      user_id = localStorage.getItem("user_id")
-      if(group.user == user_id){
+      user_id = localStorage.getItem("user_id");
+      if (group.user == user_id) {
         console.log(user_id);
         anchor.textContent = group.group_name;
         anchor.className = "text-gray-800 hover:underline";
         li.appendChild(anchor);
         groupList.appendChild(li);
       }
-
     });
   } catch (error) {
     console.error("There was a problem with the fetch operation:", error);
@@ -200,15 +199,15 @@ async function fetchGroups() {
 async function addGroup() {
   const groupInput = document.getElementById("group-input");
   const groupName = groupInput.value.trim();
-  const user = localStorage.getItem('user_id')
+  const user = localStorage.getItem("user_id");
   if (groupName) {
     try {
-      const response = await fetch("http://127.0.0.1:8000/chat/group/", {
+      const response = await fetch("/api/chat/group/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user:user, group_name: groupName }), // Adjust this structure according to your API's expectations
+        body: JSON.stringify({ user: user, group_name: groupName }), // Adjust this structure according to your API's expectations
       });
 
       if (!response.ok) throw new Error("Failed to add group");
@@ -243,7 +242,7 @@ const postSubmit = (event) => {
   const content = document.querySelector('textarea[placeholder="What\'s on your mind?"]').value;
   const flavor = document.querySelector('input[placeholder="Enter flavor"]').value;
   const region = document.querySelector('input[placeholder="Enter region"]').value;
-  const season = document.getElementById('season').value;
+  const season = document.getElementById("season").value;
 
   // Collecting files
   const imageInput = document.querySelector('input[type="file"][accept="image/*"]');
@@ -267,7 +266,7 @@ const postSubmit = (event) => {
   }
 
   try {
-    fetch("http://127.0.0.1:8000/kitchen/post/", {
+    fetch("/api/kitchen/post/", {
       method: "POST",
       body: formData,
     })
@@ -288,7 +287,7 @@ const postSubmit = (event) => {
 
 // For post to view in timeline
 const allPost = () => {
-  fetch("http://127.0.0.1:8000/kitchen/post/")
+  fetch("/api/kitchen/post/")
     .then((res) => res.json())
     .then((data) => data.forEach((item) => displayPost(item)))
     .catch((err) => console.error("Error fetching posts:", err));
@@ -308,10 +307,10 @@ const displayPost = (item) => {
               <h2 class="font-bold">${item.username}</h2>
               <span class="text-gray-500 text-sm">${creationDate}</span>
           </div>
-  
+
           <h1 class="mt-2 text-2xl font-semibold text-gray-800">${item.title}</h1>
           <p class="mt-4 font-light text-gray-600 leading-relaxed">${item.ingredients}</p>
-          
+
           <div class="mt-4">
               <p class="font-medium text-gray-800">Flavour: <a href="#" class="hover:underline">${item.flavour}</a></p>
               <p class="font-medium text-gray-800">Region: <a href="#" class="hover:underline">${item.region}</a></p>
@@ -319,16 +318,16 @@ const displayPost = (item) => {
           </div>
           <img src="${item.media}" alt="Post Image" class="post-image w-full rounded-lg mt-2" />
 
-  
+
         <!-- Action Buttons -->
           <div class="mt-4 flex justify-between text-gray-600 space-x-0">
 
         <!-- Working here -->
-        
+
             <button id="like-button-${item.id}" class="flex items-center hover:text-gray-800 transition primary-text-color" onclick="toggleReaction(${item.id}, ${item.user})">
                 <i class="fas fa-thumbs-up mr-1"></i> Like
             </button>
-        
+
         <!-- To here -->
 
 
@@ -336,12 +335,12 @@ const displayPost = (item) => {
                 <i class="fas fa-comment-dots mr-1"></i> Comment
             </button>
           </div>
-  
+
           <!-- Comments Section -->
           <div class="comment-section mt-4 space-y-2 hidden">
               <!-- Comments will be appended here -->
           </div>
-  
+
           <!-- Comment Input Field -->
           <div class="flex mt-2">
               <input id="comment-text-${item.id}" type="text" placeholder="Write a comment..." class="w-full p-2 border border-gray-300 rounded-lg" />
@@ -370,7 +369,7 @@ function postComment(recipeID) {
     recipe: recipeID,
   };
 
-  fetch("http://127.0.0.1:8000/comment/list/", {
+  fetch("/api/comment/list/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -382,7 +381,7 @@ function postComment(recipeID) {
 }
 
 const deleteComment = (commentID) => {
-  fetch(`http://127.0.0.1:8000/comment/list/${commentID}/`, {
+  fetch(`/api/comment/list/${commentID}/`, {
     method: "DELETE",
     headers: {
       "content-type": "application/json",

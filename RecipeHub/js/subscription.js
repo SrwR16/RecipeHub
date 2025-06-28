@@ -15,7 +15,7 @@ const navBar = () => {
 };
 
 const user_count = () => {
-  fetch("http://127.0.0.1:8000/chat/profile/")
+  fetch("/api/chat/profile/")
     .then((res) => res.json())
     .then((data) => {
       const monthlyPremiumCount = Array(12).fill(0); // Array for counting premium users by month
@@ -48,7 +48,20 @@ const updateChart = (premiumData, normalData) => {
 
 const ctx = document.getElementById("monthlyUserChart").getContext("2d");
 const data = {
-  labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+  labels: [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ],
   datasets: [
     {
       label: "Premium Users",
@@ -123,24 +136,24 @@ function showPlan(planType) {
 }
 
 const checkVerificationAndSubscribe = (planId, price) => {
-    fetch("http://127.0.0.1:8000/chat/profile/")
-      .then((res) => res.json())
-      .then((data) => {
-        const userId = localStorage.getItem("user_id");
-        const userProfile = data.find((item) => item.user.id == userId);
-        if (userProfile && userProfile.verified) {
-          alert("You already subscribed to a plan");
-        } else {
-          subscriptionHandle(planId, price);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching user profile:", error);
-      });
-  };
+  fetch("/api/chat/profile/")
+    .then((res) => res.json())
+    .then((data) => {
+      const userId = localStorage.getItem("user_id");
+      const userProfile = data.find((item) => item.user.id == userId);
+      if (userProfile && userProfile.verified) {
+        alert("You already subscribed to a plan");
+      } else {
+        subscriptionHandle(planId, price);
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching user profile:", error);
+    });
+};
 
 const subscriptionHandle = (subscriptionType, amount) => {
-  fetch("http://127.0.0.1:8000/promotions/product/payment/", {
+  fetch("/api/promotions/product/payment/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -153,7 +166,7 @@ const subscriptionHandle = (subscriptionType, amount) => {
     .then((res) => res.json())
     .then((data) => {
       if (data && data.GatewayPageURL) {
-        fetch("http://127.0.0.1:8000/order/list/", {
+        fetch("/api/order/list/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -170,8 +183,7 @@ const subscriptionHandle = (subscriptionType, amount) => {
             alert("Order Created Successfully!!");
           });
         window.location.href = data.GatewayPageURL;
-      } 
-      else {
+      } else {
         alert("Failed to initiate payment");
       }
     })
@@ -180,44 +192,46 @@ const subscriptionHandle = (subscriptionType, amount) => {
     });
 };
 
-const checkSubcribedUser = () =>{
-    fetch("http://127.0.0.1:8000/order/list/")
-    .then(res=>res.json())
-    .then(data=>data.forEach(item=>{
-        if(item.pay_reason=="For Subcription"){
-            makeVerified(item.user)
+const checkSubcribedUser = () => {
+  fetch("/api/order/list/")
+    .then((res) => res.json())
+    .then((data) =>
+      data.forEach((item) => {
+        if (item.pay_reason == "For Subcription") {
+          makeVerified(item.user);
         }
-    }))
-}
+      })
+    );
+};
 
-const makeVerified = (user) =>{
-    console.log(user);
-    fetch("http://127.0.0.1:8000/chat/profile/")
-    .then(res=>res.json())
-    .then(data=>{
-        data.forEach(item=>{
-            if(item.user.id==user && !item.verified){
-                fetch(`http://127.0.0.1:8000/chat/profile/${item.id}/`,{
-                    method: "PUT", // Use PUT for updating
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ verified: true }), 
-                  })
-                .then(res=>res.json())
-                .then(data=>console.log(data))
-            }
-        })
-    })
-}
+const makeVerified = (user) => {
+  console.log(user);
+  fetch("/api/chat/profile/")
+    .then((res) => res.json())
+    .then((data) => {
+      data.forEach((item) => {
+        if (item.user.id == user && !item.verified) {
+          fetch(`/api/chat/profile/${item.id}/`, {
+            method: "PUT", // Use PUT for updating
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ verified: true }),
+          })
+            .then((res) => res.json())
+            .then((data) => console.log(data));
+        }
+      });
+    });
+};
 
 const logout = () => {
-    alert("Logout Successfully");
-    localStorage.removeItem("tokens");
-    localStorage.removeItem("user_id");
-    window.location.href = "auth.html";
-  };
+  alert("Logout Successfully");
+  localStorage.removeItem("tokens");
+  localStorage.removeItem("user_id");
+  window.location.href = "auth.html";
+};
 
-checkSubcribedUser()
+checkSubcribedUser();
 user_count();
 navBar();

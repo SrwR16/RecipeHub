@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  db:
+    image: mariadb:10.11
+    container_name: recipe-mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: recipeDB
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  redis:
+    image: redis
+    container_name: recipe-redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  backend:
+    build: ./recipeHub_backend
+    container_name: recipe-backend
+    restart: always
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DATABASE_HOST=db
+      - REDIS_HOST=redis
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./recipeHub_backend:/app
+      - backend_uploads:/app/uploads
+
+  frontend:
+    build: ./RecipeHub
+    container_name: recipe-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    volumes:
+      - ./RecipeHub:/usr/share/nginx/html
+      - frontend_assets:/usr/share/nginx/html/assets
+
+volumes:
+  mariadb_data:
+  backend_uploads:
+  frontend_assets:

@@ -18,13 +18,13 @@ const navBar = () => {
 };
 
 const loadPodcast = () => {
-  fetch(`http://127.0.0.1:8000/podcast/premium/${podcast_id}`)
+  fetch(`/api/podcast/premium/${podcast_id}`)
     .then((res) => res.json())
     .then((data) => displayPodcastPremium(data));
 };
 
 const displayPodcastPremium = (data) => {
-    console.log(data);
+  console.log(data);
   const podcastContainer = document.querySelector("#podcast-container");
   podcastContainer.innerHTML = `
         <div class="flex items-center space-x-4">
@@ -41,7 +41,7 @@ const displayPodcastPremium = (data) => {
 loadPodcast();
 
 const loadEpisode = () => {
-  fetch("http://127.0.0.1:8000/podcast/episode/list/premium/")
+  fetch("/api/podcast/episode/list/premium/")
     .then((res) => res.json())
     .then((data) =>
       data.forEach((item) => {

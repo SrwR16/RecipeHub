@@ -1,15 +1,18 @@
-from django.shortcuts import render
-from rest_framework import viewsets, response, status
-from . import serializers, models
-from . import ai
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import response, status, viewsets
+
+from . import ai, models, serializers
+
 # Create your views here.
 
+
+@method_decorator(csrf_exempt, name="dispatch")
 class HumanTextViewset(viewsets.ModelViewSet):
     queryset = models.HumanText.objects.all()
     serializer_class = serializers.HumanTextSerializers
 
     def create(self, request, *args, **kwargs):
-        
         # print the human text from got the front end
         # print(f"Data from front end: {request.data}")
 
@@ -18,7 +21,7 @@ class HumanTextViewset(viewsets.ModelViewSet):
         # print('Response:', response) ## Response: <Response status_code=201, "text/html; charset=utf-8">
 
         # call the serializers to save the data in database ======= 2nd Approach
-        
+
         # Ensure the request data is in the correct format
         if isinstance(request.data, dict):  # Ensure the data is a dictionary
             # Call the serializer to save the data
@@ -33,13 +36,17 @@ class HumanTextViewset(viewsets.ModelViewSet):
             ai_response = ai.master_chef(instance)
 
             data = {
-                "instance": serializer.data, # Serialized instance data (Extra sending)
-                "ai_response": ai_response,   # AI response (What i need actually:3 )
+                "instance": serializer.data,  # Serialized instance data (Extra sending)
+                "ai_response": ai_response,  # AI response (What i need actually:3 )
             }
             return response.Response(data, status=status.HTTP_201_CREATED)
         else:
-            return response.Response({"error":"Invalid data format"}, status=status.HTTP_400_BAD_REQUEST)
+            return response.Response(
+                {"error": "Invalid data format"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
+
+@method_decorator(csrf_exempt, name="dispatch")
 class SavingResponseViewset(viewsets.ModelViewSet):
     queryset = models.SavingResponse.objects.all()
     serializer_class = serializers.SavingResponseSerializer

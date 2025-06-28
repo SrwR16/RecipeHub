@@ -5,7 +5,7 @@ const contact = (event) => {
   const message = getValueFor("message");
   const phone = getValueFor("phone");
   const username = getValueFor("username");
-  fetch("http://127.0.0.1:8000/user/list/")
+  fetch("/api/user/list/")
     .then((res) => res.json())
     .then((data) => {
       data.forEach((item) => {
@@ -18,7 +18,7 @@ const contact = (event) => {
             message,
             user,
           };
-          fetch("http://127.0.0.1:8000/support/contact/", {
+          fetch("/api/support/contact/", {
             method: "POST",
             headers: { "content-type": "application/json" },
             body: JSON.stringify(info),
@@ -44,10 +44,9 @@ const getUser = () => {
     const token_seizer = tokens.access.split(".");
     const tokenPayload = JSON.parse(atob(token_seizer[1]));
     document.getElementById("username").value = tokenPayload.username;
-  }
-  else{
-    alert('For support you need to login first.')
-    window.location.href = "auth.html"
+  } else {
+    alert("For support you need to login first.");
+    window.location.href = "auth.html";
   }
 };
 

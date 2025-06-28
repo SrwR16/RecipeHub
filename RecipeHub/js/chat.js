@@ -1,94 +1,94 @@
 // Handle user search
-document.getElementById("searchForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-    const group_name = document.getElementById("searchInput").value;
-    if (group_name) {
-        const searchParams = new URLSearchParams(window.location.search);
-        searchParams.set('group_name', group_name);
-        
-        // Update the URL with the new query parameter
-        const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
-        window.history.pushState({path: newUrl}, '', newUrl);
-        console.log("Searched Group:", group_name);
-    }
+document.getElementById("searchForm").addEventListener("submit", function (event) {
+  event.preventDefault();
+  const group_name = document.getElementById("searchInput").value;
+  if (group_name) {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set("group_name", group_name);
+
+    // Update the URL with the new query parameter
+    const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
+    window.history.pushState({ path: newUrl }, "", newUrl);
+    console.log("Searched Group:", group_name);
+  }
 });
 // On page load, get the 'group_name' param from the URL and log it
 const urlParams = new URLSearchParams(window.location.search);
-const search_group_name = urlParams.get('group_name');
-const search_group_name_modified = search_group_name.replace(/\s+/g, '')
+const search_group_name = urlParams.get("group_name");
+const search_group_name_modified = search_group_name.replace(/\s+/g, "");
 
 const allGroup = () => {
-    fetch('http://127.0.0.1:8000/chat/group/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ group_name: search_group_name })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Group posted successfully:', data);
-        
-    })
+  fetch("/api/chat/group/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ group_name: search_group_name }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Group posted successfully:", data);
+    });
 };
 
-allGroup()
+allGroup();
 
-const setGroupIdLocalStorage =()=>{
-    fetch('http://127.0.0.1:8000/chat/group/')
-    .then(res => res.json())
-    .then(data => data.forEach(item => {
-        if(search_group_name==item.group_name)
-        {
-           localStorage.setItem('group', item.id)
+const setGroupIdLocalStorage = () => {
+  fetch("/api/chat/group/")
+    .then((res) => res.json())
+    .then((data) =>
+      data.forEach((item) => {
+        if (search_group_name == item.group_name) {
+          localStorage.setItem("group", item.id);
         }
-    })
-)}
+      })
+    );
+};
 
-setGroupIdLocalStorage()
+setGroupIdLocalStorage();
 
 const showMessage = () => {
-    fetch("http://127.0.0.1:8000/chat/message/")
-      .then((res) => res.json())
-      .then((data) => {
-        const chatMessages = document.getElementById("chatMessages"); // Assuming chatMessages is the container for messages
-        chatMessages.innerHTML = ""; // Clear the container first
-        data.forEach((item) => {
-          if (item.group == localStorage.getItem("group")) {
-            displayMsg(item);
-          }
-        });
-        // Scroll to the bottom after all messages are displayed
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+  fetch("/api/chat/message/")
+    .then((res) => res.json())
+    .then((data) => {
+      const chatMessages = document.getElementById("chatMessages"); // Assuming chatMessages is the container for messages
+      chatMessages.innerHTML = ""; // Clear the container first
+      data.forEach((item) => {
+        if (item.group == localStorage.getItem("group")) {
+          displayMsg(item);
+        }
       });
-  };
-  
+      // Scroll to the bottom after all messages are displayed
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+};
+
 showMessage();
-  
+
 const displayMsg = (item) => {
-    const chatMessages = document.getElementById("chatMessages");
-  
-    // Fetch the user data for the message author
-    fetch(`http://127.0.0.1:8000/user/list/${item.author}/`)
-      .then((res) => res.json())
-      .then((userData) => {
-        // Fetch the profile to get the user images
-        fetch("http://127.0.0.1:8000/chat/profile/")
-          .then((res) => res.json())
-          .then((profiles) => {
-            // Find the profile for the message author
-            const authorProfile = profiles.find((profile) => profile.user.id == item.author);
-  
-            let profileImage = "./assets/card4.jpg"; // Default image if no profile found
-            if (authorProfile) {
-              profileImage = authorProfile.image; // Use profile image if found
-            }
-  
-            let messageHTML = ""; // Initialize message HTML
-  
-            // Check if the logged-in user is the message author
-            if (getUserId() == item.author) {
-              messageHTML = `
+  const chatMessages = document.getElementById("chatMessages");
+
+  // Fetch the user data for the message author
+  fetch(`/api/user/list/${item.author}/`)
+    .then((res) => res.json())
+    .then((userData) => {
+      // Fetch the profile to get the user images
+      fetch("/api/chat/profile/")
+        .then((res) => res.json())
+        .then((profiles) => {
+          // Find the profile for the message author
+          const authorProfile = profiles.find((profile) => profile.user.id == item.author);
+
+          let profileImage = "./assets/card4.jpg"; // Default image if no profile found
+          if (authorProfile) {
+            profileImage = authorProfile.image; // Use profile image if found
+          }
+
+          let messageHTML = ""; // Initialize message HTML
+
+          // Check if the logged-in user is the message author
+          if (getUserId() == item.author) {
+            messageHTML = `
                 <div class="flex justify-end items-center space-x-3 new-message">
                     <div>
                         <div class="text-sm font-semibold text-right text-base-200 px-4">${userData.username}</div>
@@ -99,8 +99,8 @@ const displayMsg = (item) => {
                     <img src="${profileImage}" alt="${userData.username}" class="w-12 h-12 mt-5 rounded-full" />
                 </div>
               `;
-            } else {
-              messageHTML = `
+          } else {
+            messageHTML = `
                 <div class="flex justify-start items-center space-x-3 new-message">
                     <img src="${profileImage}" alt="${userData.username}" class="w-11 h-11 mt-5 rounded-full" />
                     <div>
@@ -111,17 +111,16 @@ const displayMsg = (item) => {
                     </div>
                 </div>
               `;
-            }
-  
-            // Append the new message HTML to the chat container
-            chatMessages.innerHTML += messageHTML;
-  
-            // Scroll to the bottom after new messages are added
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-          });
-      });
-  };
-  
+          }
+
+          // Append the new message HTML to the chat container
+          chatMessages.innerHTML += messageHTML;
+
+          // Scroll to the bottom after new messages are added
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+    });
+};
 
 var ws = new WebSocket(`ws://localhost:8000/ws/ac/${search_group_name_modified}/`);
 
@@ -130,11 +129,11 @@ ws.onopen = function (event) {
 };
 
 ws.onmessage = function (event) {
-    const message = JSON.parse(event.data);
-    if (message.type === 'connection_count') {
-        console.log("Current connection count:", message.count);
-        document.getElementById("userCount").innerText = `${message.count} Online`;
-    }
+  const message = JSON.parse(event.data);
+  if (message.type === "connection_count") {
+    console.log("Current connection count:", message.count);
+    document.getElementById("userCount").innerText = `${message.count} Online`;
+  }
 };
 
 ws.onerror = function (event) {
@@ -162,21 +161,21 @@ sendButton.addEventListener("click", () => {
     // Save the message to the database
     const group = localStorage.getItem("group");
     const info = {
-        group: group,
-        author: getUserId(),
-        body: messageText
-    }
-    fetch("http://127.0.0.1:8000/chat/message/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(info),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Message saved to database:", data);
-        })
+      group: group,
+      author: getUserId(),
+      body: messageText,
+    };
+    fetch("/api/chat/message/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(info),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Message saved to database:", data);
+      });
 
     ws.onmessage = function (event) {
       console.log("Message received from server...", event.data);
@@ -202,70 +201,38 @@ sendButton.addEventListener("click", () => {
 });
 
 const getUser = () => {
-    const token = localStorage.getItem("tokens");
-    if (token) {
-      const tokens = JSON.parse(token);
-      const token_seizer = tokens.access.split(".");
-      const tokenPayload = JSON.parse(atob(token_seizer[1]));
+  const token = localStorage.getItem("tokens");
+  if (token) {
+    const tokens = JSON.parse(token);
+    const token_seizer = tokens.access.split(".");
+    const tokenPayload = JSON.parse(atob(token_seizer[1]));
     //   document.getElementById("username").value = tokenPayload.username;
-    }
-    else{
-      alert('For Join Chat Room You need login first!')
-      window.location.href = "auth.html"
-    }
-  };
+  } else {
+    alert("For Join Chat Room You need login first!");
+    window.location.href = "auth.html";
+  }
+};
 
 const logout = () => {
-    alert("Logout Successfully");
-    localStorage.removeItem("tokens");
-    localStorage.removeItem("user_id");
-    window.location.href = "auth.html";
+  alert("Logout Successfully");
+  localStorage.removeItem("tokens");
+  localStorage.removeItem("user_id");
+  window.location.href = "auth.html";
 };
-  
 
 getUser();
 
 const getUserId = () => {
-    const user_id = localStorage.getItem("user_id");
-    if (user_id) {
-      return user_id;
-    }
-  };
-  
+  const user_id = localStorage.getItem("user_id");
+  if (user_id) {
+    return user_id;
+  }
+};
+
 getUserId();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const saveMsg = (event) =>{
-    event.preventDefault(); 
-    const val = document.getElementById("messageInput").value
-    
-}
+const saveMsg = (event) => {
+  event.preventDefault();
+  const val = document.getElementById("messageInput").value;
+};
 document.getElementById("sendButton").addEventListener("click", saveMsg);
-
