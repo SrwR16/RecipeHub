@@ -1,156 +1,784 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="emerald">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RecipeHub</title>
+    <title>Sign In - RecipeHub</title>
     <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="css/professional.css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/3b65cadd71.js" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="./css/auth.css">
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      .font-body {
+        font-family: "Inter", sans-serif;
+      }
+      .font-display {
+        font-family: "Playfair Display", serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #475569 100%);
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      .floating-shape {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(251, 146, 60, 0.1);
+        animation: float 20s infinite ease-in-out;
+        filter: blur(40px);
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-50px) rotate(180deg);
+        }
+      }
+
+      .auth-card {
+        backdrop-filter: blur(16px);
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .tab-button.active {
+        background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        color: white;
+      }
+    </style>
   </head>
-  <body>
-    <header>
-      <div class="navbar px-0 lg:px-10 bg-base-100 fixed top-0 w-full z-50">
-        <div class="navbar-start">
-          <div class="dropdown">
-            <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+
+  <body class="font-body">
+    <!-- Floating Decorative Elements -->
+    <div class="floating-shape w-64 h-64 top-10 left-10" style="animation-delay: 0s"></div>
+    <div class="floating-shape w-96 h-96 top-1/3 right-1/4" style="animation-delay: 10s"></div>
+    <div class="floating-shape w-80 h-80 bottom-20 left-1/3" style="animation-delay: 5s"></div>
+
+    <!-- Modern Minimalist Header -->
+    <header
+      x-data="{
+        mobileOpen: false,
+        userMenuOpen: false,
+        searchFocused: false,
+        userLoggedIn: false,
+        scrolled: false,
+        user: {
+          name: 'Loading...',
+          email: 'Loading...',
+          profilePicture: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+        },
+        init() {
+          // Check authentication status on initialization
+          const token = localStorage.getItem('tokens');
+          this.userLoggedIn = !!token;
+
+          // Set up scroll listener
+          window.addEventListener('scroll', () => {
+            this.scrolled = window.scrollY > 10;
+          });
+
+          // Redirect if already logged in
+          if (this.userLoggedIn) {
+            setTimeout(() => {
+              window.location.href = './index.html';
+            }, 1000);
+          }
+
+          // Load user data if logged in
+          if (this.userLoggedIn) {
+            this.loadUserData();
+            this.loadNotifications();
+          }
+        },
+        async loadUserData() {
+          try {
+            // First, try to get user data from localStorage
+            const userData = localStorage.getItem('userData');
+            if (userData) {
+              const user = JSON.parse(userData);
+              this.user.name = user.name || user.full_name || user.username || 'User';
+              this.user.email = user.email || 'user@recipehub.com';
+              if (user.image || user.profilePicture) {
+                this.user.profilePicture = user.image || user.profilePicture;
+              }
+            } else {
+              // If no userData in localStorage, fetch from backend
+              const userId = localStorage.getItem('user_id');
+              if (userId) {
+                const response = await fetch('/api/chat/profile/');
+
+                if (response.ok) {
+                  const profileData = await response.json();
+                  // Find the profile matching current user
+                  const userProfile = profileData.find(item => item.user.id == userId);
+
+                  if (userProfile) {
+                    // Construct display name from available fields
+                    let displayName = userProfile.full_name;
+                    if (!displayName && userProfile.user.first_name && userProfile.user.last_name) {
+                      displayName = `${userProfile.user.first_name} ${userProfile.user.last_name}`;
+                    }
+                    if (!displayName) {
+                      displayName = userProfile.user.username || 'User';
+                    }
+
+                    this.user.name = displayName;
+                    this.user.email = userProfile.user.email || 'user@recipehub.com';
+
+                    // Set profile picture
+                    if (userProfile.image && userProfile.image !== 'default.jpg') {
+                      this.user.profilePicture = userProfile.image;
+                    }
+
+                    // Store in localStorage for future use
+                    const cacheData = {
+                      name: displayName,
+                      email: userProfile.user.email,
+                      full_name: userProfile.full_name,
+                      username: userProfile.user.username,
+                      first_name: userProfile.user.first_name,
+                      last_name: userProfile.user.last_name,
+                      image: userProfile.image
+                    };
+                    localStorage.setItem('userData', JSON.stringify(cacheData));
+                  }
+                }
+              }
+            }
+          } catch (error) {
+            console.error('Error loading user data:', error);
+            // Fallback to default values
+            this.user.name = 'User';
+            this.user.email = 'user@recipehub.com';
+          }
+        },
+        loadNotifications() {
+          // This will be implemented to load real notifications
+          setTimeout(() => {
+            // Implement notification loading logic
+          }, 100);
+        }
+      }"
+      :class="scrolled ? 'bg-white/95 backdrop-blur-lg shadow-sm' : 'bg-white/90 backdrop-blur-sm'"
+      class="fixed w-full top-0 z-50 transition-all duration-300 border-b border-gray-100"
+    >
+      <div class="max-w-7xl mx-auto">
+        <!-- Top Section -->
+        <div class="flex items-center justify-between px-6 h-16">
+          <!-- Logo (Keep Intact) -->
+          <a href="./index.html" class="flex items-center space-x-3 hover:opacity-90 transition-opacity">
+            <div
+              class="w-12 h-12 bg-gradient-to-br from-orange-500 via-orange-600 to-red-600 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/25"
+            >
+              <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M18.06 22.99h1.66c.84 0 1.53-.64 1.63-1.46L23 5.05h-5V1h-1.97v4.05h-4.97l.3 2.34c1.71.47 3.31 1.32 4.27 2.26 1.44 1.42 2.43 2.89 2.43 5.29v8.05zM1 22.99c0 .54.45.99 1 .99h16c.55 0 1-.45 1-.99v-8.05c0-2.4-.99-3.87-2.43-5.29C15.64 8.72 14.33 8 12.59 8H2v8.05c0 2.4.99 3.87 2.43 5.29.96.94 2.56 1.79 4.27 2.26L9 22.99H1z"
+                />
               </svg>
             </div>
-            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-              <li class="font-semibold"><a href="./index.html">Home</a></li>
-              <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
-              <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
-              <li class="font-semibold"><a href="./contact.html">Support</a></li>
-            </ul>
+            <div>
+              <h1 class="text-xl font-bold text-gray-900">RecipeHub</h1>
+              <p class="text-xs text-gray-500 -mt-0.5">Culinary Community</p>
+            </div>
+          </a>
+
+          <!-- Right Actions -->
+          <div class="flex items-center space-x-2 lg:space-x-4">
+            <!-- AI Chef - Desktop only -->
+            <a
+              href="./masterChef.html"
+              class="hidden xl:flex items-center space-x-2 px-3 py-1.5 lg:px-4 lg:py-2 bg-black text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M12.5 2C13.61 2 14.5 2.89 14.5 4C14.5 5.11 13.61 6 12.5 6H12V7H17C17.55 7 18 7.45 18 8S17.55 9 17 9H7C6.45 9 6 8.55 6 8S6.45 7 7 7H12V6H11.5C10.39 6 9.5 5.11 9.5 4C9.5 2.89 10.39 2 11.5 2H12.5ZM7 10H17V21C17 21.55 16.55 22 16 22H8C7.45 22 7 21.55 7 21V10Z"
+                />
+              </svg>
+              <span class="hidden xl:inline">AI Chef</span>
+            </a>
+
+            <!-- Auth Section - For guests -->
+            <div x-show="!userLoggedIn" class="hidden sm:flex items-center space-x-2 lg:space-x-3">
+              <a
+                href="#"
+                class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors hidden md:block"
+                >Already a member?</a
+              >
+              <a
+                href="./timeline.html"
+                class="px-3 py-1.5 lg:px-4 lg:py-2 bg-gray-600 text-white text-sm font-medium rounded-full hover:bg-gray-700 transition-colors"
+              >
+                <span class="hidden sm:inline">Browse as Guest</span>
+                <span class="sm:hidden">Browse</span>
+              </a>
+            </div>
+
+            <!-- User Section - For logged-in users -->
+            <div x-show="userLoggedIn" class="flex items-center space-x-1 lg:space-x-2">
+              <!-- Notifications - Always visible when logged in -->
+              <button class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                  />
+                </svg>
+              </button>
+
+              <!-- Messages - Hidden on small screens -->
+              <a
+                href="./chat.html"
+                class="hidden md:block p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+              </a>
+
+              <!-- User Profile - Always visible when logged in -->
+              <div class="relative">
+                <button @click="userMenuOpen = !userMenuOpen" class="flex items-center">
+                  <img
+                    class="w-8 h-8 rounded-full object-cover border-2 border-gray-200"
+                    :src="user.profilePicture"
+                    :alt="user.name"
+                  />
+                </button>
+                <div
+                  x-show="userMenuOpen"
+                  @click.away="userMenuOpen = false"
+                  x-transition
+                  class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
+                >
+                  <div class="px-4 py-3 border-b border-gray-100">
+                    <p class="text-sm font-medium text-gray-900" x-text="user.name"></p>
+                    <p class="text-sm text-gray-500" x-text="user.email"></p>
+                  </div>
+                  <a href="./profile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profile</a>
+                  <a href="./personalPost.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >My Recipes</a
+                  >
+                  <a href="./subscription.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >Premium</a
+                  >
+                  <a href="./chat.html" class="md:hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >Messages</a
+                  >
+                  <a href="./masterChef.html" class="xl:hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >AI Chef</a
+                  >
+                  <button
+                    onclick="logout()"
+                    class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button @click="mobileOpen = !mobileOpen" class="lg:hidden p-2 text-gray-500 hover:text-gray-700">
+              <svg x-show="!mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              <svg x-show="mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-          <p class="btn btn-ghost text-xl p-0 montserrat-alternates-bold text-3xl font-semibold">Recipe</p>
-          <span class="font-light text-2xl primary-text-color">Hub</span>
         </div>
-        <div class="navbar-center hidden lg:flex">
-          <ul class="menu menu-horizontal px-1">
-            <li class="font-semibold"><a href="./index.html">Home</a></li>
-            <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
-            <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
-            <li class="font-semibold"><a href="./contact.html">Contact</a></li>
-          </ul>
-        </div>
-        <div class="navbar-end gap-10">
-          <div class="indicator">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              />
-            </svg>
-            <span class="badge badge-xs indicator-item" style="background-color: #77574c"></span>
+
+        <!-- Navigation Bar -->
+        <nav class="hidden lg:block border-t border-gray-100 bg-gray-50/50">
+          <div class="px-6">
+            <div class="flex items-center justify-center space-x-8 h-12">
+              <a href="./index.html" class="modern-nav-link">Home</a>
+              <a href="./timeline.html" class="modern-nav-link">Discover</a>
+              <a href="./food-map.html" class="modern-nav-link">
+                Food Map
+                <span class="ml-2 px-2 py-0.5 text-xs font-semibold bg-orange-100 text-orange-800 rounded-full"
+                  >NEW</span
+                >
+              </a>
+              <a href="./subscription.html" class="modern-nav-link">Premium</a>
+              <a href="./contact.html" class="modern-nav-link">Support</a>
+            </div>
           </div>
-          <div class="pr-5 lg:pr-0">
-            <a href="./auth.html" class="btn text-white" style="background-color: #77574c">Login</a>
+        </nav>
+
+        <!-- Mobile Menu -->
+        <div x-show="mobileOpen" x-transition class="lg:hidden bg-white border-t border-gray-200">
+          <div class="px-4 py-4 space-y-3">
+            <!-- Navigation Links -->
+            <a href="./index.html" class="block py-2 text-gray-700">Home</a>
+            <a href="./timeline.html" class="block py-2 text-gray-700">Discover</a>
+            <a href="./food-map.html" class="flex items-center py-2 text-gray-700">
+              Food Map
+              <span class="ml-2 px-2 py-0.5 text-xs font-semibold bg-orange-100 text-orange-800 rounded-full">NEW</span>
+            </a>
+            <a href="./subscription.html" class="block py-2 text-gray-700">Premium</a>
+            <a href="./contact.html" class="block py-2 text-gray-700">Support</a>
+
+            <!-- AI Chef for all users -->
+            <div class="pt-3 border-t border-gray-100">
+              <a href="./masterChef.html" class="block py-2 text-gray-900 font-medium">🤖 AI Chef</a>
+            </div>
+
+            <!-- User Section for logged-in users -->
+            <div x-show="userLoggedIn" class="pt-3 border-t border-gray-100 space-y-2">
+              <div class="flex items-center space-x-3 py-2">
+                <img
+                  class="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
+                  :src="user.profilePicture"
+                  :alt="user.name"
+                />
+                <div>
+                  <p class="text-sm font-medium text-gray-900" x-text="user.name"></p>
+                  <p class="text-xs text-gray-500" x-text="user.email"></p>
+                </div>
+              </div>
+              <a href="./profile.html" class="block py-2 text-gray-700 pl-4">👤 Profile</a>
+              <a href="./personalPost.html" class="block py-2 text-gray-700 pl-4">📝 My Recipes</a>
+              <a href="./chat.html" class="block py-2 text-gray-700 pl-4">💬 Messages</a>
+              <button onclick="logout()" class="block w-full text-left py-2 text-red-600 pl-4">🚪 Sign Out</button>
+            </div>
+
+            <!-- Guest Section for non-logged-in users -->
+            <div x-show="!userLoggedIn" class="pt-3 border-t border-gray-100">
+              <a
+                href="./timeline.html"
+                class="block w-full py-3 text-center bg-gray-600 text-white font-medium rounded-lg"
+                >Browse as Guest</a
+              >
+            </div>
           </div>
         </div>
       </div>
     </header>
-    <main class="bg-base-200 lg:px-52 py-8 pt-16 h-full">
-        <section class="forms-section">
-            <h1 class="section-title">Login or Signup Here</h1>
-            <div class="forms">
-              <div class="form-wrapper is-active">
-                <button type="button" class="switcher switcher-login">
-                  Login
-                  <span class="underline"></span>
-                </button>
-                <form onsubmit="login(event)"  enctype="multipart/form-data" class="form form-login login-height-control relative leading-10 px-10">
-                  <fieldset>
-                    <legend>Please, enter your email and password for login.</legend>
-                    <div class="input-block">
-                      <label for="login-email">E-mail</label>
-                      <input id="email" type="email" required>
-                    </div>
-                    <div class="input-block">
-                      <label for="login-password">Password</label>
-                      <input id="password" type="password" required>
-                    </div>
-                  </fieldset>
-                  <button type="submit" class="btn-login absolute bottom-4">Login</button>
-                </form>
+
+    <!-- Main Content -->
+    <main class="pt-28 min-h-screen auth-gradient relative overflow-hidden">
+      <!-- Background Decorations -->
+      <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
+        <div
+          class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-white/5 rounded-full blur-2xl"
+        ></div>
+      </div>
+
+      <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="text-center mb-12">
+          <div
+            class="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-lg text-orange-800 rounded-full text-sm font-medium mb-6"
+          >
+            <span class="w-2 h-2 bg-orange-500 rounded-full mr-2 animate-pulse"></span>
+            Join the Culinary Community
+          </div>
+          <h1 class="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 font-display">
+            Welcome to
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">RecipeHub</span>
+          </h1>
+          <p class="text-xl text-gray-700 max-w-3xl mx-auto">
+            Connect with passionate chefs, discover amazing recipes, and share your culinary journey with food lovers
+            worldwide
+          </p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <!-- Left Side: Features -->
+          <div class="space-y-8">
+            <div class="flex items-start space-x-4">
+              <div
+                class="flex-shrink-0 w-12 h-12 bg-white/20 backdrop-blur-lg rounded-2xl flex items-center justify-center"
+              >
+                <i class="fas fa-users text-orange-600 text-xl"></i>
               </div>
-              <div class="form-wrapper">
-                <button type="button" class="switcher switcher-signup">
-                  Sign Up
-                  <span class="underline"></span>
-                </button>
-                <form class="form form-signup reg-height-control relative leading-10 px-10">
-                  <fieldset>
-                    <legend>Please, enter your email, password and password confirmation for sign up.</legend>
-                    <div class="input-block">
-                      <label for="signup-username">Username</label>
-                      <input id="signup-username" type="text" required>
-                    </div>
-                    <div class="input-block">
-                      <label for="signup-email">E-mail</label>
-                      <input id="signup-email" type="email" required>
-                    </div>
-                    <div class="input-block">
-                      <label for="signup-password">Password</label>
-                      <input id="signup-password" type="password" required>
-                    </div>
-                  </fieldset>
-                  <button type="submit" class="btn-signup absolute bottom-4">Sign Up</button>
-                </form>                
+              <div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Connect with Food Lovers</h3>
+                <p class="text-gray-600">
+                  Join a vibrant community of chefs, home cooks, and food enthusiasts from around the world.
+                </p>
               </div>
             </div>
-          </section>
-    </main>
-    <footer class="grid bg-base-100 w-full h-full">
-      <div class="px-14 mx-auto lg:grid grid-cols-12 gap-16 lg:flex justify-center items-cente py-16">
-        <div class="col-span-4">
-          <p class="btn btn-ghost text-xl p-0 montserrat-alternates-bold text-3xl font-semibold">Recipe</p>
-          <span class="font-light text-2xl primary-text-color">Hub</span>
-          <h1>Making the world a better place through constructing elegant hierarchies.</h1>
-          <div class="social-media-links flex gap-10 my-5 text-2xl">
-            <a href=""><i class="fa-brands fa-facebook"></i></a>
-            <a href=""><i class="fa-brands fa-instagram"></i></a>
-            <a href=""><i class="fa-brands fa-github"></i></a>
-            <a href=""><i class="fa-brands fa-youtube"></i></a>
+
+            <div class="flex items-start space-x-4">
+              <div
+                class="flex-shrink-0 w-12 h-12 bg-white/20 backdrop-blur-lg rounded-2xl flex items-center justify-center"
+              >
+                <i class="fas fa-utensils text-orange-600 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Share Your Recipes</h3>
+                <p class="text-gray-600">
+                  Upload your favorite recipes, cooking tips, and culinary creations with beautiful photos and videos.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start space-x-4">
+              <div
+                class="flex-shrink-0 w-12 h-12 bg-white/20 backdrop-blur-lg rounded-2xl flex items-center justify-center"
+              >
+                <i class="fas fa-map-marked-alt text-orange-600 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Discover Local Gems</h3>
+                <p class="text-gray-600">
+                  Find amazing restaurants and hidden culinary gems in your area through our community food map.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start space-x-4">
+              <div
+                class="flex-shrink-0 w-12 h-12 bg-white/20 backdrop-blur-lg rounded-2xl flex items-center justify-center"
+              >
+                <i class="fas fa-robot text-orange-600 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">AI Chef Assistant</h3>
+                <p class="text-gray-600">
+                  Get personalized recipe recommendations and cooking tips from our intelligent AI chef assistant.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Side: Auth Forms -->
+          <div class="auth-card p-8">
+            <!-- Tab Navigation -->
+            <div class="flex border-b border-gray-200 mb-8">
+              <button
+                @click="activeTab = 'login'"
+                :class="activeTab === 'login' ? 'tab-button active' : 'tab-button'"
+                class="flex-1 text-center"
+              >
+                <i class="fas fa-sign-in-alt mr-2"></i>
+                Sign In
+              </button>
+              <button
+                @click="activeTab = 'signup'"
+                :class="activeTab === 'signup' ? 'tab-button active' : 'tab-button'"
+                class="flex-1 text-center"
+              >
+                <i class="fas fa-user-plus mr-2"></i>
+                Sign Up
+              </button>
+            </div>
+
+            <!-- Login Form -->
+            <div x-show="activeTab === 'login'" x-transition>
+              <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h2>
+                <p class="text-gray-600">Sign in to continue your culinary journey</p>
+              </div>
+
+              <form onsubmit="login(event)" class="space-y-6">
+                <div class="input-group">
+                  <label class="form-label">Email Address</label>
+                  <input id="email" type="email" required class="form-input" placeholder="Enter your email" />
+                </div>
+
+                <div class="input-group">
+                  <label class="form-label">Password</label>
+                  <input id="password" type="password" required class="form-input" placeholder="Enter your password" />
+                </div>
+
+                <div class="flex items-center justify-between">
+                  <label class="flex items-center">
+                    <input type="checkbox" class="rounded border-gray-300 text-orange-600 focus:ring-orange-500" />
+                    <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                  </label>
+                  <a href="#" class="text-sm text-orange-600 hover:text-orange-700">Forgot password?</a>
+                </div>
+
+                <button
+                  type="submit"
+                  class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-3 rounded-lg font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                >
+                  <i class="fas fa-sign-in-alt mr-2"></i>
+                  Sign In
+                </button>
+              </form>
+
+              <div class="mt-6 text-center">
+                <p class="text-gray-600">
+                  Don't have an account?
+                  <button @click="activeTab = 'signup'" class="text-orange-600 hover:text-orange-700 font-medium">
+                    Sign up here
+                  </button>
+                </p>
+              </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div x-show="activeTab === 'signup'" x-transition style="display: none">
+              <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Join RecipeHub</h2>
+                <p class="text-gray-600">Create your account and start your culinary adventure</p>
+              </div>
+
+              <form class="space-y-6">
+                <div class="input-group">
+                  <label class="form-label">Username</label>
+                  <input id="signup-username" type="text" required class="form-input" placeholder="Choose a username" />
+                </div>
+
+                <div class="input-group">
+                  <label class="form-label">Email Address</label>
+                  <input id="signup-email" type="email" required class="form-input" placeholder="Enter your email" />
+                </div>
+
+                <div class="input-group">
+                  <label class="form-label">Password</label>
+                  <input
+                    id="signup-password"
+                    type="password"
+                    required
+                    class="form-input"
+                    placeholder="Create a password"
+                  />
+                </div>
+
+                <div class="flex items-start">
+                  <input
+                    type="checkbox"
+                    required
+                    class="mt-1 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                  />
+                  <span class="ml-2 text-sm text-gray-600">
+                    I agree to the <a href="#" class="text-orange-600 hover:text-orange-700">Terms of Service</a> and
+                    <a href="#" class="text-orange-600 hover:text-orange-700">Privacy Policy</a>
+                  </span>
+                </div>
+
+                <button
+                  type="submit"
+                  class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-3 rounded-lg font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                >
+                  <i class="fas fa-user-plus mr-2"></i>
+                  Create Account
+                </button>
+              </form>
+
+              <div class="mt-6 text-center">
+                <p class="text-gray-600">
+                  Already have an account?
+                  <button @click="activeTab = 'login'" class="text-orange-600 hover:text-orange-700 font-medium">
+                    Sign in here
+                  </button>
+                </p>
+              </div>
+            </div>
+
+            <!-- Social Login -->
+            <div class="mt-8">
+              <div class="relative">
+                <div class="absolute inset-0 flex items-center">
+                  <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                  <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                </div>
+              </div>
+
+              <div class="mt-6 grid grid-cols-2 gap-3">
+                <button
+                  class="w-full flex justify-center items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                >
+                  <i class="fab fa-google text-red-500 mr-2"></i>
+                  Google
+                </button>
+                <button
+                  class="w-full flex justify-center items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                >
+                  <i class="fab fa-facebook text-blue-600 mr-2"></i>
+                  Facebook
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="col-span-2 leading-10">
-          <h1 class="font-semibold">Solutions</h1>
-          <p class="font-extralight">KhanaPina Deals</p>
-          <p class="font-extralight">Grocery delivery</p>
-          <p class="font-extralight">pandago for customers</p>
-          <p class="font-extralight">pandago for business</p>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <!-- Brand Section -->
+          <div class="md:col-span-1">
+            <div class="flex items-center mb-4">
+              <h3 class="text-2xl font-display font-bold text-orange-400">Recipe</h3>
+              <span class="text-2xl font-display font-light text-gray-300">Hub</span>
+            </div>
+            <p class="text-gray-400 mb-6">
+              The world's leading culinary platform connecting food enthusiasts, chefs, and restaurant lovers.
+            </p>
+            <div class="flex space-x-4">
+              <a href="#" class="text-gray-400 hover:text-orange-400 transition-colors">
+                <i class="fab fa-facebook-f text-lg"></i>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-orange-400 transition-colors">
+                <i class="fab fa-instagram text-lg"></i>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-orange-400 transition-colors">
+                <i class="fab fa-twitter text-lg"></i>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-orange-400 transition-colors">
+                <i class="fab fa-youtube text-lg"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Platform -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Platform</h4>
+            <ul class="space-y-2">
+              <li>
+                <a href="./timeline.html" class="text-gray-400 hover:text-white transition-colors">Recipe Timeline</a>
+              </li>
+              <li><a href="./food-map.html" class="text-gray-400 hover:text-white transition-colors">Food Map</a></li>
+              <li>
+                <a href="./masterChef.html" class="text-gray-400 hover:text-white transition-colors"
+                  >AI Chef Assistant</a
+                >
+              </li>
+              <li>
+                <a href="./podcast.html" class="text-gray-400 hover:text-white transition-colors">Culinary Podcasts</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Services -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Services</h4>
+            <ul class="space-y-2">
+              <li>
+                <a href="./subscription.html" class="text-gray-400 hover:text-white transition-colors"
+                  >Premium Membership</a
+                >
+              </li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Restaurant Partners</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Chef Collaborations</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Catering Services</a></li>
+            </ul>
+          </div>
+
+          <!-- Support -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Support</h4>
+            <ul class="space-y-2">
+              <li><a href="./contact.html" class="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact Us</a></li>
+            </ul>
+          </div>
         </div>
-        <div class="col-span-2 leading-10">
-          <h1 class="font-semibold">Support</h1>
-          <p class="font-extralight">Pricing</p>
-          <p class="font-extralight">Careers</p>
-          <p class="font-extralight">Corporate Customer</p>
-          <p class="font-extralight">Dine-in</p>
-        </div>
-        <div class="col-span-2 leading-8">
-          <h1 class="font-semibold">Help Center</h1>
-          <p class="font-extralight">Privacy Policy</p>
-          <p class="font-extralight">Refund Account Terms and Conditions</p>
-          <p class="font-extralight">Cashback Program</p>
-          <p class="font-extralight">pandapro Subscription</p>
-        </div>
-        <div class="col-span-2 leading-8">
-          <h1 class="font-semibold">Terms and Conditions</h1>
-          <p class="font-extralight">Security</p>
-          <p class="font-extralight">Partner with Us</p>
-          <p class="font-extralight">How foodpanda Works</p>
-          <p class="font-extralight">Download foodpanda Apps</p>
+
+        <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-400 text-sm">© 2024 RecipeHub. All rights reserved.</p>
+          <div class="flex space-x-6 mt-4 md:mt-0">
+            <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Privacy</a>
+            <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Terms</a>
+            <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Sitemap</a>
+          </div>
         </div>
       </div>
-      <small class="text-center font-semibold bg-gray-700 h-9 text-white flex items-center justify-center">©All right reserved</small>
     </footer>
+
+    <!-- Scripts -->
     <script src="./js/auth.js"></script>
+
+    <!-- Global Authentication Functions -->
+    <script>
+      // Global function for logout (used by the logout button)
+      function logout() {
+        localStorage.removeItem("tokens");
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userData"); // Clear user data too
+        window.location.href = "./auth.html";
+      }
+
+      // Global function to refresh auth status (can be called from other pages)
+      function refreshAuthStatus() {
+        // This can be called after login/logout to update the header
+        const token = localStorage.getItem("tokens");
+        const header = document.querySelector("header[x-data]");
+        if (header && header._x_dataStack) {
+          const headerData = header._x_dataStack[0];
+          headerData.userLoggedIn = !!token;
+          // If logging in, reload user data
+          if (token) {
+            headerData.loadUserData();
+          }
+        }
+      }
+
+      // Global function to update user data (can be called after profile updates)
+      function updateUserData(newUserData) {
+        // Update localStorage
+        localStorage.setItem("userData", JSON.stringify(newUserData));
+
+        // Update header display
+        const header = document.querySelector("header[x-data]");
+        if (header && header._x_dataStack) {
+          const headerData = header._x_dataStack[0];
+
+          // Handle name from multiple possible fields
+          let displayName = newUserData.name || newUserData.full_name;
+          if (!displayName && newUserData.first_name && newUserData.last_name) {
+            displayName = `${newUserData.first_name} ${newUserData.last_name}`;
+          }
+          if (!displayName) {
+            displayName = newUserData.username || "User";
+          }
+
+          headerData.user.name = displayName;
+          headerData.user.email = newUserData.email || "user@recipehub.com";
+
+          // Handle profile picture
+          if (newUserData.image || newUserData.profilePicture) {
+            headerData.user.profilePicture = newUserData.image || newUserData.profilePicture;
+          }
+        }
+      }
+
+      // Authentication Check for auth page
+      function checkAuthStatus() {
+        const token = localStorage.getItem("tokens");
+        const userLoggedIn = !!token;
+
+        // Redirect if already logged in
+        if (userLoggedIn) {
+          window.location.href = "./index.html";
+        }
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", checkAuthStatus);
+    </script>
   </body>
 </html>

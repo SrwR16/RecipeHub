@@ -1,211 +1,1363 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="emerald">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RecipeHub</title>
-    <link rel="stylesheet" href="./css/style.css" />
-    <link rel="stylesheet" href="css/auth.css" />
+    <title>RecipeHub - Professional Culinary Platform</title>
+
+    <!-- Core Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://kit.fontawesome.com/3b65cadd71.js" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/professional.css" />
+
+    <!-- Icons & Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Additional Scripts -->
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <!-- Custom Tailwind Configuration -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#fef7f0",
+                100: "#fdeee0",
+                200: "#fad9c0",
+                300: "#f6bc95",
+                400: "#f19568",
+                500: "#ec7944",
+                600: "#dd5f2a",
+                700: "#b84820",
+                800: "#943b20",
+                900: "#78321d",
+                950: "#411810",
+              },
+            },
+            fontFamily: {
+              display: ["Playfair Display", "serif"],
+              body: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Enhanced Header Styles -->
+    <style>
+      .nav-item {
+        @apply flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-white/80 transition-all duration-300 relative;
+      }
+
+      .nav-item.active {
+        @apply text-orange-600 bg-white/90 shadow-sm;
+      }
+
+      .nav-item.featured {
+        @apply text-blue-600 relative;
+      }
+
+      .nav-item.premium {
+        @apply text-purple-600;
+      }
+
+      .new-badge {
+        @apply absolute -top-1 -right-1 bg-blue-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full;
+      }
+
+      .action-btn {
+        @apply w-11 h-11 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200/50 flex items-center justify-center text-gray-600 hover:text-gray-900 transition-all duration-300 hover:shadow-md;
+      }
+
+      .search-btn {
+        @apply hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200;
+      }
+
+      .notification-btn {
+        @apply relative;
+      }
+
+      .notification-dot {
+        @apply absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse;
+      }
+
+      .dropdown-item {
+        @apply flex items-center space-x-3 px-6 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors w-full text-left;
+      }
+
+      .dropdown-item i {
+        @apply text-gray-400 w-4;
+      }
+
+      .premium-item {
+        @apply text-purple-600 hover:bg-purple-50;
+      }
+
+      .premium-item i {
+        @apply text-purple-500;
+      }
+
+      .mobile-nav-item {
+        @apply flex items-center space-x-4 px-4 py-3 rounded-xl text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-all font-medium relative;
+      }
+
+      .mobile-nav-item.active {
+        @apply text-orange-600 bg-orange-50;
+      }
+
+      .mobile-nav-item i {
+        @apply w-5 text-center;
+      }
+
+      /* Modern Header Styles */
+      .modern-nav-link {
+        @apply text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors relative py-2;
+      }
+
+      .modern-nav-link.active {
+        @apply text-gray-900;
+      }
+
+      .modern-nav-link.active::after {
+        content: "";
+        @apply absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 rounded-full;
+      }
+
+      .premium-item i {
+        @apply text-purple-500;
+      }
+
+      .mobile-nav-item {
+        @apply flex items-center space-x-4 px-4 py-3 rounded-xl text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-all font-medium relative;
+      }
+
+      .mobile-nav-item.active {
+        @apply text-orange-600 bg-orange-50;
+      }
+
+      .mobile-nav-item i {
+        @apply w-5 text-center;
+      }
+    </style>
   </head>
-  <body>
-    <header>
-      <div class="navbar px-0 lg:px-10 bg-base-100 fixed top-0 w-full z-50">
-        <div class="navbar-start">
-          <div class="dropdown">
-            <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+  <body class="font-body bg-gray-50">
+    <!-- Modern Minimalist Header -->
+    <header
+      x-data="{
+        mobileOpen: false,
+        userMenuOpen: false,
+        searchFocused: false,
+        userLoggedIn: false,
+        scrolled: false,
+        user: {
+          name: 'Loading...',
+          email: 'Loading...',
+          profilePicture: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+        },
+        init() {
+          // Check authentication status on initialization
+          const token = localStorage.getItem('tokens');
+          this.userLoggedIn = !!token;
+
+          // Set up scroll listener
+          window.addEventListener('scroll', () => {
+            this.scrolled = window.scrollY > 10;
+          });
+
+          // Load user data if logged in
+          if (this.userLoggedIn) {
+            this.loadUserData();
+            this.loadNotifications();
+          }
+        },
+                async loadUserData() {
+          try {
+            // First, try to get user data from localStorage
+            const userData = localStorage.getItem('userData');
+            if (userData) {
+              const user = JSON.parse(userData);
+              this.user.name = user.name || user.full_name || user.username || 'User';
+              this.user.email = user.email || 'user@recipehub.com';
+              if (user.image || user.profilePicture) {
+                this.user.profilePicture = user.image || user.profilePicture;
+              }
+            } else {
+              // If no userData in localStorage, fetch from backend
+              const userId = localStorage.getItem('user_id');
+              if (userId) {
+                const response = await fetch('/api/chat/profile/');
+
+                if (response.ok) {
+                  const profileData = await response.json();
+                  // Find the profile matching current user
+                  const userProfile = profileData.find(item => item.user.id == userId);
+
+                  if (userProfile) {
+                    // Construct display name from available fields
+                    let displayName = userProfile.full_name;
+                    if (!displayName && userProfile.user.first_name && userProfile.user.last_name) {
+                      displayName = `${userProfile.user.first_name} ${userProfile.user.last_name}`;
+                    }
+                    if (!displayName) {
+                      displayName = userProfile.user.username || 'User';
+                    }
+
+                    this.user.name = displayName;
+                    this.user.email = userProfile.user.email || 'user@recipehub.com';
+
+                    // Set profile picture
+                    if (userProfile.image && userProfile.image !== 'default.jpg') {
+                      this.user.profilePicture = userProfile.image;
+                    }
+
+                    // Store in localStorage for future use
+                    const cacheData = {
+                      name: displayName,
+                      email: userProfile.user.email,
+                      full_name: userProfile.full_name,
+                      username: userProfile.user.username,
+                      first_name: userProfile.user.first_name,
+                      last_name: userProfile.user.last_name,
+                      image: userProfile.image
+                    };
+                    localStorage.setItem('userData', JSON.stringify(cacheData));
+                  }
+                }
+              }
+            }
+          } catch (error) {
+            console.error('Error loading user data:', error);
+            // Fallback to default values
+            this.user.name = 'User';
+            this.user.email = 'user@recipehub.com';
+          }
+        },
+        loadNotifications() {
+          // This will be implemented to load real notifications
+          setTimeout(() => {
+            // Implement notification loading logic
+          }, 100);
+        }
+      }"
+      :class="scrolled ? 'bg-white/95 backdrop-blur-lg shadow-sm' : 'bg-white'"
+      class="fixed w-full top-0 z-50 transition-all duration-300 border-b border-gray-100"
+    >
+      <div class="max-w-7xl mx-auto">
+        <!-- Top Section -->
+        <div class="flex items-center justify-between px-6 h-16">
+          <!-- Logo (Keep Intact) -->
+          <a href="./index.html" class="flex items-center space-x-3 hover:opacity-90 transition-opacity">
+            <div
+              class="w-12 h-12 bg-gradient-to-br from-orange-500 via-orange-600 to-red-600 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/25"
+            >
+              <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M18.06 22.99h1.66c.84 0 1.53-.64 1.63-1.46L23 5.05h-5V1h-1.97v4.05h-4.97l.3 2.34c1.71.47 3.31 1.32 4.27 2.26 1.44 1.42 2.43 2.89 2.43 5.29v8.05zM1 22.99c0 .54.45.99 1 .99h16c.55 0 1-.45 1-.99v-8.05c0-2.4-.99-3.87-2.43-5.29C15.64 8.72 14.33 8 12.59 8H2v8.05c0 2.4.99 3.87 2.43 5.29.96.94 2.56 1.79 4.27 2.26L9 22.99H1z"
+                />
               </svg>
             </div>
-            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-              <li class="font-semibold"><a href="./index.html">Home</a></li>
-              <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
-              <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
-              <li class="font-semibold"><a href="./contact.html">Support</a></li>
-            </ul>
-          </div>
-          <p class="btn btn-ghost text-xl p-0 montserrat-alternates-bold text-3xl font-semibold">Recipe</p>
-          <span class="font-light text-2xl primary-text-color">Hub</span>
-        </div>
-        <div class="navbar-center hidden lg:flex">
-          <ul class="menu menu-horizontal px-1">
-            <li class="font-semibold"><a href="./index.html">Home</a></li>
-            <li class="font-semibold"><a href="./timeline.html">Timeline</a></li>
-            <li class="font-semibold"><a href="./subscription.html">Subscribe</a></li>
-            <li class="font-semibold"><a href="./contact.html">Support</a></li>
-          </ul>
-        </div>
-        <!----- Maste Chef ----->
-        <a
-          href="./masterChef.html"
-          class="btn btn-primary flex items-center gap-2 bg-gradient-to-r from-blue-500 to-green-500 border-none text-white px-4 py-2 rounded-full hover:scale-105 transition-transform"
-        >
-          Master Chefs AI
-        </a>
-        <div class="navbar-end gap-5 flex justify-items-center">
-          <div class="indicator">
-            <a href="chat.html">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div>
+              <h1 class="text-xl font-bold text-gray-900">RecipeHub</h1>
+              <p class="text-xs text-gray-500 -mt-0.5">Culinary Community</p>
+            </div>
+          </a>
+
+          <!-- Center Search - Temporarily Disabled -->
+          <!--
+          <div class="hidden md:block flex-1 max-w-xl mx-8">
+            <div class="relative">
+              <input
+                type="text"
+                placeholder="Search recipes, restaurants, chefs..."
+                @focus="searchFocused = true"
+                @blur="searchFocused = false"
+                :class="searchFocused ? 'bg-white border-gray-300 shadow-sm' : 'bg-gray-50 border-gray-200'"
+                class="w-full h-10 px-4 pl-10 pr-16 border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all"
+              />
+              <svg
+                class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M3 8v12a2 2 0 002 2h14a2 2 0 002-2V8M3 8l9 5 9-5M3 8l9 5 9-5M3 8h18"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-            </a>
-            <span class="badge badge-xs indicator-item" style="background-color: #77574c"></span>
-          </div>
-          <div id="login-control" class="pr-5 lg:pr-0"></div>
-        </div>
-      </div>
-    </header>
-    <main class="bg-base-200 lg:px-52 py-8 pt-16">
-      <div class="banner">
-        <div class="banner-image lg:relative sm:w-100%"></div>
-        <div id="banner-title" class="project-feature lg:absolute lg:top-1/3 lg:start-60 bg-base-100 lg:px-8 px-3 h-fit"></div>
-      </div>
-
-      <div class="popular-recipe-section lg:pt-16 pt-5">
-        <h1 class="text-4xl pb-10 px-3 lg:px-0">Popular recipe collections...</h1>
-      </div>
-
-      <div class="lg:grid grid-cols-12 gap-x-3 lg:px-0 leading-10">
-        <!-- Popular Recipe -->
-
-        <div class="lg:col-span-9 flex items-center flex-wrap gap-10 lg:gap-4" id="recipe-container">
-          <!-- Recipe cards will be dynamically inserted here -->
-        </div>
-
-        <!-- Trending Now Recipe -->
-
-        <div class="lg:col-span-3 w-full lg:p-0 p-3 pt-10 lg:pt-0">
-          <h1 class="text-3xl lg:text-2xl pb-3 font-semibold">Trending Now..</h1>
-          <div id="trending"></div>
-          <button class="btn-neutral popular-recipe-button text-xl w-full py-2"><a href="./timeline.html">More popular recipes</a></button>
-        </div>
-      </div>
-
-      <div class="w-full bg-base-100 h-20 my-9 flex justify-center items-center">
-        <button class="btn-neutral primary-color p-3 rounded"><a href="./timeline.html">More recipe collections</a></button>
-      </div>
-
-      <div class="popular-recipe-section lg:py-7 pt-5">
-        <h1 class="text-4xl px-3 lg:px-0">Latest offers and promotions...</h1>
-      </div>
-
-      <!-- Lates offer and promotions start-->
-      <div id="promotion"></div>
-      <!-- Lates offer and promotions end-->
-
-      <!-- Podcast start -->
-      <div class="pt-16 h-5/6 w-fit px-3 lg:px-0">
-        <p class="text-4xl pb-4">Recipe<span class="font-light text-3xl primary-text-color">Hub</span> Premium Podcast</p>
-        <p class="podcast-text">Tune in to the latest episodes to hear our experts discuss all things food.</p>
-        <div class="py-10 grid grid-cols-12 lg:px-10">
-          <div class="col-span-12 lg:col-span-8">
-            <div class="flex flex-wrap gap-10" id="podcast-container">
-              <!-- Podcast Items will be injected here -->
+              <button
+                class="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 px-3 bg-orange-500 text-white text-xs font-medium rounded-full hover:bg-orange-600 transition-colors"
+              >
+                Go
+              </button>
             </div>
           </div>
-          <div class="audio-color-section col-span-12 lg:col-span-4 rounded pt-10 lg:pt-0 relative">
-            <div class="popular-recipe-button col-span-4 rounded">
-              <div class="px-10">
-                <h1 class="text-center text-base-100 text-3xl py-7">
-                  RecipeHub <span class="primary-text-color text-base-100 text-semibold">Free</span> Podcast
-                </h1>
-                <div id="podcast-episode"></div>
-              </div>
-              <button class="btn btn-neutral w-full rounded-none absolute bottom-0">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          -->
+
+          <!-- Right Actions -->
+          <div class="flex items-center space-x-2 lg:space-x-4">
+            <!-- AI Chef - Desktop only -->
+            <a
+              href="./masterChef.html"
+              class="hidden xl:flex items-center space-x-2 px-3 py-1.5 lg:px-4 lg:py-2 bg-black text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M12.5 2C13.61 2 14.5 2.89 14.5 4C14.5 5.11 13.61 6 12.5 6H12V7H17C17.55 7 18 7.45 18 8S17.55 9 17 9H7C6.45 9 6 8.55 6 8S6.45 7 7 7H12V6H11.5C10.39 6 9.5 5.11 9.5 4C9.5 2.89 10.39 2 11.5 2H12.5ZM7 10H17V21C17 21.55 16.55 22 16 22H8C7.45 22 7 21.55 7 21V10Z"
+                />
+              </svg>
+              <span class="hidden xl:inline">AI Chef</span>
+            </a>
+
+            <!-- Auth Section - For guests -->
+            <div x-show="!userLoggedIn" class="hidden sm:flex items-center space-x-2 lg:space-x-3">
+              <a
+                href="./auth.html"
+                class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors hidden md:block"
+                >Sign In</a
+              >
+              <a
+                href="./auth.html"
+                class="px-3 py-1.5 lg:px-4 lg:py-2 bg-orange-500 text-white text-sm font-medium rounded-full hover:bg-orange-600 transition-colors"
+              >
+                <span class="hidden sm:inline">Get Started</span>
+                <span class="sm:hidden">Join</span>
+              </a>
+            </div>
+
+            <!-- User Section - For logged-in users -->
+            <div x-show="userLoggedIn" class="flex items-center space-x-1 lg:space-x-2">
+              <!-- Notifications - Always visible when logged in -->
+              <button class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
                   />
                 </svg>
-                Listen to more episodes
               </button>
+
+              <!-- Messages - Hidden on small screens -->
+              <a
+                href="./chat.html"
+                class="hidden md:block p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+              </a>
+
+              <!-- User Profile - Always visible when logged in -->
+              <div class="relative">
+                <button @click="userMenuOpen = !userMenuOpen" class="flex items-center">
+                  <img
+                    class="w-8 h-8 rounded-full object-cover border-2 border-gray-200"
+                    :src="user.profilePicture"
+                    :alt="user.name"
+                  />
+                </button>
+                <div
+                  x-show="userMenuOpen"
+                  @click.away="userMenuOpen = false"
+                  x-transition
+                  class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
+                >
+                  <div class="px-4 py-3 border-b border-gray-100">
+                    <p class="text-sm font-medium text-gray-900" x-text="user.name"></p>
+                    <p class="text-sm text-gray-500" x-text="user.email"></p>
+                  </div>
+                  <a href="./profile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profile</a>
+                  <a href="./personalPost.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >My Recipes</a
+                  >
+                  <a href="./subscription.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >Premium</a
+                  >
+                  <a href="./chat.html" class="md:hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >Messages</a
+                  >
+                  <a href="./masterChef.html" class="xl:hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >AI Chef</a
+                  >
+                  <button
+                    onclick="logout()"
+                    class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button @click="mobileOpen = !mobileOpen" class="lg:hidden p-2 text-gray-500 hover:text-gray-700">
+              <svg x-show="!mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              <svg x-show="mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <nav class="hidden lg:block border-t border-gray-100 bg-gray-50/50">
+          <div class="px-6">
+            <div class="flex items-center justify-center space-x-8 h-12">
+              <a href="./index.html" class="modern-nav-link active">Home</a>
+              <a href="./timeline.html" class="modern-nav-link">Discover</a>
+              <a href="./food-map.html" class="modern-nav-link">
+                Food Map
+                <span class="ml-2 px-2 py-0.5 text-xs font-semibold bg-orange-100 text-orange-800 rounded-full"
+                  >NEW</span
+                >
+              </a>
+              <a href="./subscription.html" class="modern-nav-link">Premium</a>
+              <a href="./contact.html" class="modern-nav-link">Support</a>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Mobile Menu -->
+        <div x-show="mobileOpen" x-transition class="lg:hidden bg-white border-t border-gray-200">
+          <div class="px-4 py-4 space-y-3">
+            <!-- Navigation Links -->
+            <a href="./index.html" class="block py-2 text-gray-900 font-medium">Home</a>
+            <a href="./timeline.html" class="block py-2 text-gray-700">Discover</a>
+            <a href="./food-map.html" class="flex items-center py-2 text-gray-700">
+              Food Map
+              <span class="ml-2 px-2 py-0.5 text-xs font-semibold bg-orange-100 text-orange-800 rounded-full">NEW</span>
+            </a>
+            <a href="./subscription.html" class="block py-2 text-gray-700">Premium</a>
+            <a href="./contact.html" class="block py-2 text-gray-700">Support</a>
+
+            <!-- AI Chef for all users -->
+            <div class="pt-3 border-t border-gray-100">
+              <a href="./masterChef.html" class="block py-2 text-gray-900 font-medium">🤖 AI Chef</a>
+            </div>
+
+            <!-- User Section for logged-in users -->
+            <div x-show="userLoggedIn" class="pt-3 border-t border-gray-100 space-y-2">
+              <div class="flex items-center space-x-3 py-2">
+                <img
+                  class="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
+                  :src="user.profilePicture"
+                  :alt="user.name"
+                />
+                <div>
+                  <p class="text-sm font-medium text-gray-900" x-text="user.name"></p>
+                  <p class="text-xs text-gray-500" x-text="user.email"></p>
+                </div>
+              </div>
+              <a href="./profile.html" class="block py-2 text-gray-700 pl-4">👤 Profile</a>
+              <a href="./personalPost.html" class="block py-2 text-gray-700 pl-4">📝 My Recipes</a>
+              <a href="./chat.html" class="block py-2 text-gray-700 pl-4">💬 Messages</a>
+              <button onclick="logout()" class="block w-full text-left py-2 text-red-600 pl-4">🚪 Sign Out</button>
+            </div>
+
+            <!-- Guest Section for non-logged-in users -->
+            <div x-show="!userLoggedIn" class="pt-3 border-t border-gray-100">
+              <a
+                href="./auth.html"
+                class="block w-full py-3 text-center bg-orange-500 text-white font-medium rounded-lg"
+                >Get Started</a
+              >
             </div>
           </div>
         </div>
       </div>
-      <!-- Podcast end -->
-
-      <!-- SignUp start -->
-      <div class="never-miss-recipe h-fit bg-base-300 leading-10 pt-4 pb-6">
-        <div class="flex text-center flex-col">
-          <h1 class="text-3xl py-5">Never miss a recipe from Good Food</h1>
-          <p>Sign up to receive our weekly newsletter.</p>
-          <div class="flex justify-center gap-3 py-5">
-            <label class="input input-bordered flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
-                <path
-                  d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z"
-                />
-                <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
-              </svg>
-              <input type="text" class="grow w-96" placeholder="Email" />
-            </label>
-            <button class="btn-neutral popular-recipe-button py-1 px-14 rounded"><a href="#">Sign me up!</a></button>
+    </header>
+    <!-- Main Content -->
+    <main class="pt-28 min-h-screen">
+      <!-- Hero Section -->
+      <section class="hero-section relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-orange-50 via-white to-yellow-50"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div class="text-center mb-16">
+            <div
+              class="inline-flex items-center px-4 py-2 bg-orange-100 text-orange-800 rounded-full text-sm font-medium mb-6"
+            >
+              <span class="w-2 h-2 bg-orange-500 rounded-full mr-2 animate-pulse"></span>
+              Community-Driven • Seasonal • Regional
+            </div>
+            <h1 class="text-5xl lg:text-7xl font-bold text-gray-900 mb-6 font-display">
+              Discover
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600"> Authentic </span>
+              Flavors
+            </h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+              Explore seasonal specialties, regional cuisines, and community favorites. Connect with passionate cooks
+              and discover the stories behind every dish.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+              <a href="./timeline.html" class="btn-primary text-lg px-8 py-4">
+                <i class="fas fa-utensils mr-2"></i>
+                Explore Recipes
+              </a>
+              <a href="./food-map.html" class="btn-secondary text-lg px-8 py-4">
+                <i class="fas fa-map-marked-alt mr-2"></i>
+                Food Map
+                <span class="ml-2 px-2 py-1 bg-orange-200 text-orange-800 text-xs rounded-full">NEW</span>
+              </a>
+            </div>
           </div>
-          <p>
-            By entering your details, you are agreeing to our <a class="primary-text-color" href="">terms and conditions</a> and
-            <a class="primary-text-color" href="">privacy policy</a>. You can unsubscribe at any time.
+
+          <!-- Featured Content Preview -->
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <div class="flex items-center mb-4">
+                <div class="w-3 h-3 bg-blue-500 rounded-full mr-2 animate-pulse"></div>
+                <span class="text-sm font-semibold text-blue-600">SEASONAL</span>
+              </div>
+              <img
+                src="https://images.unsplash.com/photo-1551218808-94e220e084d2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                alt="Winter Recipe"
+                class="w-full h-32 object-cover rounded-lg mb-4"
+              />
+              <h3 class="font-bold text-gray-900 mb-2">Winter Comfort Foods</h3>
+              <p class="text-sm text-gray-600 mb-3">Warming dishes perfect for the season</p>
+              <div class="flex items-center text-xs text-gray-500">
+                <i class="fas fa-snowflake mr-1"></i>
+                <span>Winter</span>
+                <span class="mx-2">•</span>
+                <i class="fas fa-heart mr-1 text-red-500"></i>
+                <span>Cozy</span>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <div class="flex items-center mb-4">
+                <div class="w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                <span class="text-sm font-semibold text-green-600">REGIONAL</span>
+              </div>
+              <img
+                src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                alt="Regional Recipe"
+                class="w-full h-32 object-cover rounded-lg mb-4"
+              />
+              <h3 class="font-bold text-gray-900 mb-2">Local Specialties</h3>
+              <p class="text-sm text-gray-600 mb-3">Authentic flavors from around the world</p>
+              <div class="flex items-center text-xs text-gray-500">
+                <i class="fas fa-globe mr-1"></i>
+                <span>Global</span>
+                <span class="mx-2">•</span>
+                <i class="fas fa-utensils mr-1"></i>
+                <span>Traditional</span>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <div class="flex items-center mb-4">
+                <div class="w-3 h-3 bg-red-500 rounded-full mr-2 animate-pulse"></div>
+                <span class="text-sm font-semibold text-red-600">POPULAR</span>
+              </div>
+              <img
+                src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                alt="Popular Recipe"
+                class="w-full h-32 object-cover rounded-lg mb-4"
+              />
+              <h3 class="font-bold text-gray-900 mb-2">Community Favorites</h3>
+              <p class="text-sm text-gray-600 mb-3">Recipes that bring people together</p>
+              <div class="flex items-center text-xs text-gray-500">
+                <i class="fas fa-users mr-1"></i>
+                <span>Community</span>
+                <span class="mx-2">•</span>
+                <i class="fas fa-star mr-1 text-yellow-500"></i>
+                <span>Top Rated</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Featured Recipes Section (Backend Connected) -->
+      <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <!-- Section Header -->
+          <div class="text-center mb-16">
+            <div
+              class="inline-flex items-center px-4 py-2 bg-orange-100 text-orange-800 rounded-full text-sm font-medium mb-4"
+            >
+              <i class="fas fa-heart mr-2"></i>
+              Community Curated
+            </div>
+            <h2 class="text-4xl lg:text-5xl font-display font-bold text-gray-900 mb-4">Popular & Seasonal Recipes</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+              Discover recipes loved by our community - from seasonal favorites to regional specialties
+            </p>
+          </div>
+
+          <!-- Trending Categories -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+            <div
+              class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 text-center hover:from-blue-100 hover:to-blue-200 transition-all cursor-pointer"
+            >
+              <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-snowflake text-white text-xl"></i>
+              </div>
+              <h3 class="font-bold text-gray-900 mb-1">Winter Specials</h3>
+              <p class="text-sm text-gray-600">Seasonal favorites</p>
+            </div>
+            <div
+              class="bg-gradient-to-br from-red-50 to-red-100 rounded-2xl p-6 text-center hover:from-red-100 hover:to-red-200 transition-all cursor-pointer"
+            >
+              <div class="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-heart text-white text-xl"></i>
+              </div>
+              <h3 class="font-bold text-gray-900 mb-1">Most Loved</h3>
+              <p class="text-sm text-gray-600">Community favorites</p>
+            </div>
+            <div
+              class="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 text-center hover:from-green-100 hover:to-green-200 transition-all cursor-pointer"
+            >
+              <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-globe text-white text-xl"></i>
+              </div>
+              <h3 class="font-bold text-gray-900 mb-1">Regional Cuisine</h3>
+              <p class="text-sm text-gray-600">Local flavors</p>
+            </div>
+            <div
+              class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 text-center hover:from-purple-100 hover:to-purple-200 transition-all cursor-pointer"
+            >
+              <div class="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-utensils text-white text-xl"></i>
+              </div>
+              <h3 class="font-bold text-gray-900 mb-1">By Flavor</h3>
+              <p class="text-sm text-gray-600">Taste profiles</p>
+            </div>
+          </div>
+
+          <!-- Main Content Grid -->
+          <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Featured Content -->
+            <div class="lg:col-span-2">
+              <div class="flex items-center justify-between mb-8">
+                <h3 class="text-2xl font-bold text-gray-900">Featured Recipes</h3>
+                <div class="flex space-x-2">
+                  <button
+                    class="px-4 py-2 bg-orange-500 text-white text-sm rounded-lg hover:bg-orange-600 transition-colors"
+                  >
+                    All
+                  </button>
+                  <button
+                    class="px-4 py-2 bg-gray-100 text-gray-600 text-sm rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Popular
+                  </button>
+                  <button
+                    class="px-4 py-2 bg-gray-100 text-gray-600 text-sm rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Winter
+                  </button>
+                  <button
+                    class="px-4 py-2 bg-gray-100 text-gray-600 text-sm rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Regional
+                  </button>
+                </div>
+              </div>
+
+              <!-- Original Backend Container -->
+              <div class="professional-grid" id="recipe-container">
+                <!-- Recipe cards will be dynamically inserted here by backend -->
+              </div>
+
+              <div class="text-center mt-12">
+                <a href="./timeline.html" class="btn-primary">
+                  <i class="fas fa-arrow-right mr-2"></i>
+                  View All Recipes
+                </a>
+              </div>
+            </div>
+
+            <!-- Live Trending Sidebar -->
+            <div class="lg:col-span-1">
+              <div
+                class="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 shadow-lg border border-gray-200 sticky top-32"
+              >
+                <div class="flex items-center mb-6">
+                  <div class="w-3 h-3 bg-red-500 rounded-full mr-2 animate-pulse"></div>
+                  <h3 class="text-2xl font-display font-semibold text-gray-900">Trending Now</h3>
+                </div>
+
+                <!-- Original Backend Container -->
+                <div id="trending" class="space-y-4">
+                  <!-- Trending items will be loaded here by backend -->
+                </div>
+
+                <div class="mt-6">
+                  <a href="./timeline.html" class="w-full btn-secondary text-center block">See All Trends</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Community Food Map Section -->
+      <section class="py-16 bg-gradient-to-br from-orange-50 to-yellow-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div class="animate-on-scroll">
+              <h2 class="text-4xl font-display font-bold text-gray-900 mb-6">
+                Community-Driven <span class="text-primary-600">Food Discovery</span>
+              </h2>
+              <p class="text-xl text-gray-600 mb-8">
+                Discover hidden gems and local favorites recommended by our passionate food community. Share your own
+                discoveries and help fellow food lovers find amazing dining experiences within 2km of their location.
+              </p>
+              <ul class="space-y-4 mb-8">
+                <li class="flex items-center">
+                  <i class="fas fa-users text-primary-600 mr-3"></i>
+                  <span class="text-gray-700">Community-recommended restaurants</span>
+                </li>
+                <li class="flex items-center">
+                  <i class="fas fa-heart text-primary-600 mr-3"></i>
+                  <span class="text-gray-700">Personal reviews and experiences</span>
+                </li>
+                <li class="flex items-center">
+                  <i class="fas fa-plus-circle text-primary-600 mr-3"></i>
+                  <span class="text-gray-700">Add your own favorite spots</span>
+                </li>
+                <li class="flex items-center">
+                  <i class="fas fa-map-marker-alt text-primary-600 mr-3"></i>
+                  <span class="text-gray-700">2km radius local discovery</span>
+                </li>
+              </ul>
+              <a href="./food-map.html" class="btn-primary">
+                <i class="fas fa-compass mr-2"></i>
+                Explore Community Food Map
+              </a>
+            </div>
+            <div class="animate-on-scroll">
+              <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="p-6">
+                  <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">Recent Community Finds</h3>
+                    <span class="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">Within 2km</span>
+                  </div>
+                  <div class="space-y-4">
+                    <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-xl">
+                      <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-pizza-slice text-primary-600"></i>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <h4 class="font-medium text-gray-900 truncate">Bella Italiana</h4>
+                        <p class="text-sm text-gray-600">Added by Sarah M.</p>
+                        <p class="text-xs text-primary-600 mt-1">"The best margherita in town! €12"</p>
+                        <div class="flex items-center mt-2">
+                          <div class="flex text-yellow-400">
+                            <i class="fas fa-star text-xs"></i>
+                            <i class="fas fa-star text-xs"></i>
+                            <i class="fas fa-star text-xs"></i>
+                            <i class="fas fa-star text-xs"></i>
+                            <i class="fas fa-star text-xs"></i>
+                          </div>
+                          <span class="text-xs text-gray-500 ml-2">0.8km away</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-xl">
+                      <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-coffee text-primary-600"></i>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <h4 class="font-medium text-gray-900 truncate">Corner Café</h4>
+                        <p class="text-sm text-gray-600">Added by Mike K.</p>
+                        <p class="text-xs text-primary-600 mt-1">"Perfect morning coffee! €3"</p>
+                        <div class="flex items-center mt-2">
+                          <div class="flex text-yellow-400">
+                            <i class="fas fa-star text-xs"></i>
+                            <i class="fas fa-star text-xs"></i>
+                            <i class="fas fa-star text-xs"></i>
+                            <i class="fas fa-star text-xs"></i>
+                            <i class="far fa-star text-xs"></i>
+                          </div>
+                          <span class="text-xs text-gray-500 ml-2">1.2km away</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-xl">
+                      <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-utensils text-primary-600"></i>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <h4 class="font-medium text-gray-900 truncate">Local Bistro</h4>
+                        <p class="text-sm text-gray-600">Added by Emma L.</p>
+                        <p class="text-xs text-primary-600 mt-1">"Cozy atmosphere, great pasta! €15"</p>
+                        <div class="flex items-center mt-2">
+                          <div class="flex text-yellow-400">
+                            <i class="fas fa-star text-xs"></i>
+                            <i class="fas fa-star text-xs"></i>
+                            <i class="fas fa-star text-xs"></i>
+                            <i class="fas fa-star text-xs"></i>
+                            <i class="fas fa-star-half-alt text-xs"></i>
+                          </div>
+                          <span class="text-xs text-gray-500 ml-2">1.8km away</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="bg-primary-50 p-4 border-t">
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-600">Join the community!</span>
+                    <a
+                      href="./food-map.html"
+                      class="text-primary-600 font-medium text-sm hover:text-primary-700 transition-colors"
+                    >
+                      View All →
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Culinary Podcasts Section -->
+      <section class="py-20 bg-gradient-to-br from-purple-50 to-indigo-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16 animate-on-scroll">
+            <div
+              class="inline-flex items-center px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-medium mb-4"
+            >
+              <i class="fas fa-podcast mr-2"></i>
+              Free & Premium Content
+            </div>
+            <h2 class="text-4xl lg:text-5xl font-display font-bold text-gray-900 mb-4">
+              Culinary
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">Podcasts</span>
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+              Start with our free episodes featuring cooking tips and chef stories, then unlock exclusive premium
+              content with masterclasses and behind-the-scenes insights
+            </p>
+          </div>
+
+          <div class="grid lg:grid-cols-2 gap-12 items-center mb-16">
+            <!-- Featured Episode -->
+            <div class="animate-on-scroll">
+              <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="relative">
+                  <img
+                    src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    alt="Featured Podcast Episode"
+                    class="w-full h-64 object-cover"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div class="absolute bottom-4 left-4 right-4">
+                    <div class="flex items-center text-white mb-2">
+                      <span class="bg-green-600 px-2 py-1 rounded text-xs font-medium">FREE</span>
+                      <span class="text-sm ml-2 opacity-90">Episode 24</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white">Essential Cooking Tips with Chef Laurent</h3>
+                  </div>
+                  <button
+                    class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors group"
+                  >
+                    <i class="fas fa-play text-purple-600 text-xl ml-1 group-hover:scale-110 transition-transform"></i>
+                  </button>
+                </div>
+                <div class="p-6">
+                  <div class="flex items-center text-sm text-gray-500 mb-3">
+                    <i class="fas fa-clock mr-2"></i>
+                    <span>45 min</span>
+                    <span class="mx-2">•</span>
+                    <i class="fas fa-calendar mr-2"></i>
+                    <span>Dec 15, 2024</span>
+                  </div>
+                  <p class="text-gray-600 mb-4">
+                    Join chef Laurent Dubois as he shares essential cooking techniques that every home cook should know.
+                    Learn knife skills, seasoning basics, and simple ways to elevate your everyday cooking.
+                  </p>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <img
+                        src="https://images.unsplash.com/photo-1583394293214-28ded15ee548?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=64&h=64&q=80"
+                        alt="Chef Laurent"
+                        class="w-8 h-8 rounded-full mr-3"
+                      />
+                      <span class="text-sm font-medium text-gray-700">Chef Laurent Dubois</span>
+                    </div>
+                    <div class="flex items-center text-green-600">
+                      <i class="fas fa-play mr-1 text-sm"></i>
+                      <span class="text-sm font-medium">Listen Free</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Podcast Features -->
+            <div class="animate-on-scroll">
+              <h3 class="text-3xl font-display font-bold text-gray-900 mb-8">Free & Premium Content</h3>
+              <div class="space-y-6">
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-microphone text-green-600 text-xl"></i>
+                  </div>
+                  <div class="ml-4">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">
+                      Free Weekly Episodes <span class="text-green-600 text-sm font-medium ml-2">FREE</span>
+                    </h4>
+                    <p class="text-gray-600">
+                      Basic cooking tips, chef interviews, and recipe discussions available to all members every
+                      Tuesday.
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-users text-purple-600 text-xl"></i>
+                  </div>
+                  <div class="ml-4">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">
+                      Exclusive Interviews
+                      <span class="text-purple-600 text-sm font-medium ml-2"
+                        ><i class="fas fa-crown mr-1"></i>PREMIUM</span
+                      >
+                    </h4>
+                    <p class="text-gray-600">
+                      Behind-the-scenes access to Michelin-starred chefs, their personal stories, and industry secrets.
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-graduation-cap text-purple-600 text-xl"></i>
+                  </div>
+                  <div class="ml-4">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">
+                      Masterclass Series
+                      <span class="text-purple-600 text-sm font-medium ml-2"
+                        ><i class="fas fa-crown mr-1"></i>PREMIUM</span
+                      >
+                    </h4>
+                    <p class="text-gray-600">
+                      Advanced technique tutorials, professional kitchen secrets, and step-by-step culinary education.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-8">
+                <a href="./podcast.html" class="btn-primary mr-4">
+                  <i class="fas fa-headphones mr-2"></i>
+                  Listen to Free Episodes
+                </a>
+                <a
+                  href="./subscription.html"
+                  class="text-purple-600 font-medium hover:text-purple-700 transition-colors"
+                >
+                  <i class="fas fa-crown mr-1"></i>
+                  Unlock Premium Content
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Latest Episodes Grid -->
+          <div class="animate-on-scroll">
+            <div class="flex items-center justify-between mb-8">
+              <div>
+                <h3 class="text-2xl font-bold text-gray-900">Latest Episodes</h3>
+                <p class="text-sm text-gray-500 mt-1">Start with free episodes • Upgrade for premium masterclasses</p>
+              </div>
+              <a href="./podcast.html" class="text-purple-600 font-medium hover:text-purple-700 transition-colors">
+                View All Episodes →
+              </a>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+              <!-- Episode 1 -->
+              <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="relative">
+                  <img
+                    src="https://images.unsplash.com/photo-1466637574441-749b8f19452f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                    alt="Italian Pasta Masterclass"
+                    class="w-full h-40 object-cover"
+                  />
+                  <div class="absolute top-3 right-3">
+                    <span class="bg-black/70 text-white px-2 py-1 rounded text-xs">32 min</span>
+                  </div>
+                </div>
+                <div class="p-5">
+                  <div class="flex items-center justify-between text-xs mb-2">
+                    <div class="flex items-center text-gray-500">
+                      <span>Episode 23</span>
+                      <span class="mx-2">•</span>
+                      <span>Dec 8, 2024</span>
+                    </div>
+                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium">FREE</span>
+                  </div>
+                  <h4 class="font-bold text-gray-900 mb-2">Basic Pasta Making Tips</h4>
+                  <p class="text-sm text-gray-600 mb-3">
+                    Learn fundamental pasta-making techniques that any home cook can master.
+                  </p>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <img
+                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=32&h=32&q=80"
+                        alt="Chef Marco"
+                        class="w-6 h-6 rounded-full mr-2"
+                      />
+                      <span class="text-xs text-gray-700">Chef Marco</span>
+                    </div>
+                    <button class="text-green-600 hover:text-green-700">
+                      <i class="fas fa-play"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Episode 2 -->
+              <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="relative">
+                  <img
+                    src="https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                    alt="Asian Fusion Techniques"
+                    class="w-full h-40 object-cover"
+                  />
+                  <div class="absolute top-3 right-3">
+                    <span class="bg-black/70 text-white px-2 py-1 rounded text-xs">28 min</span>
+                  </div>
+                </div>
+                <div class="p-5">
+                  <div class="flex items-center justify-between text-xs mb-2">
+                    <div class="flex items-center text-gray-500">
+                      <span>Episode 22</span>
+                      <span class="mx-2">•</span>
+                      <span>Dec 1, 2024</span>
+                    </div>
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-medium"
+                      ><i class="fas fa-crown mr-1"></i>PREMIUM</span
+                    >
+                  </div>
+                  <h4 class="font-bold text-gray-900 mb-2">Advanced Asian Fusion Masterclass</h4>
+                  <p class="text-sm text-gray-600 mb-3">
+                    Professional techniques and trade secrets from Michelin-starred chef Kenji Yamamoto.
+                  </p>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <img
+                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=32&h=32&q=80"
+                        alt="Chef Kenji"
+                        class="w-6 h-6 rounded-full mr-2"
+                      />
+                      <span class="text-xs text-gray-700">Chef Kenji</span>
+                    </div>
+                    <button class="text-purple-600 hover:text-purple-700">
+                      <i class="fas fa-lock"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Episode 3 -->
+              <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="relative">
+                  <img
+                    src="https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                    alt="Dessert Innovation"
+                    class="w-full h-40 object-cover"
+                  />
+                  <div class="absolute top-3 right-3">
+                    <span class="bg-black/70 text-white px-2 py-1 rounded text-xs">41 min</span>
+                  </div>
+                </div>
+                <div class="p-5">
+                  <div class="flex items-center justify-between text-xs mb-2">
+                    <div class="flex items-center text-gray-500">
+                      <span>Episode 21</span>
+                      <span class="mx-2">•</span>
+                      <span>Nov 24, 2024</span>
+                    </div>
+                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium">FREE</span>
+                  </div>
+                  <h4 class="font-bold text-gray-900 mb-2">Dessert Basics with Chef Elena</h4>
+                  <p class="text-sm text-gray-600 mb-3">
+                    Learn fundamental dessert techniques and simple sweet treats from pastry chef Elena Rodriguez.
+                  </p>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <img
+                        src="https://images.unsplash.com/photo-1494790108755-2616b612b386?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=32&h=32&q=80"
+                        alt="Chef Elena"
+                        class="w-6 h-6 rounded-full mr-2"
+                      />
+                      <span class="text-xs text-gray-700">Chef Elena</span>
+                    </div>
+                    <button class="text-green-600 hover:text-green-700">
+                      <i class="fas fa-play"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Promotions Section -->
+      <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12 animate-on-scroll">
+            <h2 class="text-4xl font-display font-bold text-gray-900 mb-4">Exclusive Offers & Promotions</h2>
+            <p class="text-xl text-gray-600">Don't miss out on these limited-time culinary experiences</p>
+          </div>
+          <div id="promotion" class="professional-grid">
+            <!-- Promotions will be loaded here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Premium Features Section -->
+      <section class="py-16 bg-primary-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div class="animate-on-scroll">
+              <div class="bg-primary-600 rounded-2xl p-8 text-white">
+                <h3 class="text-3xl font-display font-bold mb-4">RecipeHub Premium</h3>
+                <p class="text-primary-100 mb-6">
+                  Unlock exclusive content, premium podcasts, and personalized chef consultations
+                </p>
+                <div id="podcast-container" class="space-y-4 mb-6">
+                  <!-- Podcast previews will be loaded here -->
+                </div>
+                <a
+                  href="./subscription.html"
+                  class="bg-white text-primary-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors inline-block"
+                >
+                  <i class="fas fa-crown mr-2"></i>
+                  Upgrade to Premium
+                </a>
+              </div>
+            </div>
+            <div class="animate-on-scroll">
+              <h2 class="text-4xl font-display font-bold text-gray-900 mb-6">Master Your Culinary Journey</h2>
+              <div class="space-y-6">
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 bg-primary-600 rounded-lg p-3">
+                    <i class="fas fa-podcast text-white text-xl"></i>
+                  </div>
+                  <div class="ml-4">
+                    <h4 class="text-lg font-semibold text-gray-900">Exclusive Podcasts</h4>
+                    <p class="text-gray-600">Weekly episodes with world-renowned chefs and culinary experts</p>
+                  </div>
+                </div>
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 bg-primary-600 rounded-lg p-3">
+                    <i class="fas fa-video text-white text-xl"></i>
+                  </div>
+                  <div class="ml-4">
+                    <h4 class="text-lg font-semibold text-gray-900">Masterclasses</h4>
+                    <p class="text-gray-600">Step-by-step video tutorials from professional chefs</p>
+                  </div>
+                </div>
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 bg-primary-600 rounded-lg p-3">
+                    <i class="fas fa-users text-white text-xl"></i>
+                  </div>
+                  <div class="ml-4">
+                    <h4 class="text-lg font-semibold text-gray-900">Community Access</h4>
+                    <p class="text-gray-600">Connect with fellow food enthusiasts and professional chefs</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Newsletter Section -->
+      <section class="py-16 bg-gray-900 text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 class="text-4xl font-display font-bold mb-4">Stay Updated with Culinary Trends</h2>
+          <p class="text-xl text-gray-300 mb-8">
+            Get weekly insights, new recipes, and exclusive content delivered to your inbox
+          </p>
+          <form class="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+            <div class="flex-1">
+              <input
+                type="email"
+                placeholder="Enter your email address"
+                class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent"
+              />
+            </div>
+            <button type="submit" class="btn-primary whitespace-nowrap">
+              <i class="fas fa-envelope mr-2"></i>
+              Subscribe
+            </button>
+          </form>
+          <p class="text-sm text-gray-400 mt-4">
+            By subscribing, you agree to our
+            <a href="#" class="text-primary-400 hover:text-primary-300">Terms</a> and
+            <a href="#" class="text-primary-400 hover:text-primary-300">Privacy Policy</a>
           </p>
         </div>
-      </div>
-      <!-- SignUp end -->
+      </section>
     </main>
-    <footer class="grid bg-base-100 w-full h-full">
-      <div class="px-14 mx-auto lg:grid grid-cols-12 gap-16 lg:flex justify-center items-cente py-16">
-        <div class="col-span-4">
-          <p class="btn btn-ghost text-xl p-0 montserrat-alternates-bold text-3xl font-semibold">Recipe</p>
-          <span class="font-light text-2xl primary-text-color">Hub</span>
-          <h1>Making the world a better place through constructing elegant hierarchies.</h1>
-          <div class="social-media-links flex gap-10 my-5 text-2xl">
-            <a href=""><i class="fa-brands fa-facebook"></i></a>
-            <a href=""><i class="fa-brands fa-instagram"></i></a>
-            <a href=""><i class="fa-brands fa-github"></i></a>
-            <a href=""><i class="fa-brands fa-youtube"></i></a>
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <!-- Brand Section -->
+          <div class="md:col-span-1">
+            <div class="flex items-center mb-4">
+              <h3 class="text-2xl font-display font-bold text-primary-400">Recipe</h3>
+              <span class="text-2xl font-display font-light text-gray-300">Hub</span>
+            </div>
+            <p class="text-gray-400 mb-6">
+              The world's leading culinary platform connecting food enthusiasts, chefs, and restaurant lovers.
+            </p>
+            <div class="flex space-x-4">
+              <a href="#" class="text-gray-400 hover:text-primary-400 transition-colors">
+                <i class="fab fa-facebook-f text-lg"></i>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-primary-400 transition-colors">
+                <i class="fab fa-instagram text-lg"></i>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-primary-400 transition-colors">
+                <i class="fab fa-twitter text-lg"></i>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-primary-400 transition-colors">
+                <i class="fab fa-youtube text-lg"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Platform -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Platform</h4>
+            <ul class="space-y-2">
+              <li>
+                <a href="./timeline.html" class="text-gray-400 hover:text-white transition-colors">Recipe Timeline</a>
+              </li>
+              <li><a href="./food-map.html" class="text-gray-400 hover:text-white transition-colors">Food Map</a></li>
+              <li>
+                <a href="./masterChef.html" class="text-gray-400 hover:text-white transition-colors"
+                  >AI Chef Assistant</a
+                >
+              </li>
+              <li>
+                <a href="./podcast.html" class="text-gray-400 hover:text-white transition-colors">Culinary Podcasts</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Services -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Services</h4>
+            <ul class="space-y-2">
+              <li>
+                <a href="./subscription.html" class="text-gray-400 hover:text-white transition-colors"
+                  >Premium Membership</a
+                >
+              </li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Restaurant Partners</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Chef Collaborations</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Catering Services</a></li>
+            </ul>
+          </div>
+
+          <!-- Support -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Support</h4>
+            <ul class="space-y-2">
+              <li><a href="./contact.html" class="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact Us</a></li>
+            </ul>
           </div>
         </div>
-        <div class="col-span-2 leading-10">
-          <h1 class="font-semibold">Solutions</h1>
-          <p class="font-extralight">KhanaPina Deals</p>
-          <p class="font-extralight">Grocery delivery</p>
-          <p class="font-extralight">pandago for customers</p>
-          <p class="font-extralight">pandago for business</p>
-        </div>
-        <div class="col-span-2 leading-10">
-          <h1 class="font-semibold">Support</h1>
-          <p class="font-extralight">Pricing</p>
-          <p class="font-extralight">Careers</p>
-          <p class="font-extralight">Corporate Customer</p>
-          <p class="font-extralight">Dine-in</p>
-        </div>
-        <div class="col-span-2 leading-8">
-          <h1 class="font-semibold">Help Center</h1>
-          <p class="font-extralight">Privacy Policy</p>
-          <p class="font-extralight">Refund Account Terms and Conditions</p>
-          <p class="font-extralight">Cashback Program</p>
-          <p class="font-extralight">pandapro Subscription</p>
-        </div>
-        <div class="col-span-2 leading-8">
-          <h1 class="font-semibold">Terms and Conditions</h1>
-          <p class="font-extralight">Security</p>
-          <p class="font-extralight">Partner with Us</p>
-          <p class="font-extralight">How foodpanda Works</p>
-          <p class="font-extralight">Download foodpanda Apps</p>
+
+        <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-400 text-sm">© 2024 RecipeHub. All rights reserved.</p>
+          <div class="flex space-x-6 mt-4 md:mt-0">
+            <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Privacy</a>
+            <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Terms</a>
+            <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Sitemap</a>
+          </div>
         </div>
       </div>
-      <small class="text-center font-semibold bg-gray-700 h-9 text-white flex items-center justify-center">©All right reserved</small>
     </footer>
+
+    <!-- Core Scripts -->
+    <script src="./js/auth.js"></script>
     <script src="./js/app.js"></script>
     <script src="./js/home.js"></script>
+
+    <!-- Global Authentication Functions -->
+    <script>
+      // Global function for logout (used by the logout button)
+      function logout() {
+        localStorage.removeItem("tokens");
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userData"); // Clear user data too
+        window.location.href = "./auth.html";
+      }
+
+      // Global function to refresh auth status (can be called from other pages)
+      function refreshAuthStatus() {
+        // This can be called after login/logout to update the header
+        const token = localStorage.getItem("tokens");
+        const header = document.querySelector("header[x-data]");
+        if (header && header._x_dataStack) {
+          const headerData = header._x_dataStack[0];
+          headerData.userLoggedIn = !!token;
+          // If logging in, reload user data
+          if (token) {
+            headerData.loadUserData();
+          }
+        }
+      }
+
+      // Global function to update user data (can be called after profile updates)
+      function updateUserData(newUserData) {
+        // Update localStorage
+        localStorage.setItem("userData", JSON.stringify(newUserData));
+
+        // Update header display
+        const header = document.querySelector("header[x-data]");
+        if (header && header._x_dataStack) {
+          const headerData = header._x_dataStack[0];
+
+          // Handle name from multiple possible fields
+          let displayName = newUserData.name || newUserData.full_name;
+          if (!displayName && newUserData.first_name && newUserData.last_name) {
+            displayName = `${newUserData.first_name} ${newUserData.last_name}`;
+          }
+          if (!displayName) {
+            displayName = newUserData.username || "User";
+          }
+
+          headerData.user.name = displayName;
+          headerData.user.email = newUserData.email || "user@recipehub.com";
+
+          // Handle profile picture
+          if (newUserData.image || newUserData.profilePicture) {
+            headerData.user.profilePicture = newUserData.image || newUserData.profilePicture;
+          }
+        }
+      }
+    </script>
   </body>
 </html>
