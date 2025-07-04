@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -218,9 +219,5 @@ CHANNEL_LAYERS = {
 }
 
 # Google Maps API Configuration
-GOOGLE_MAPS_API_KEY = os.environ.get(
-    "GOOGLE_MAPS_API_KEY", "AIzaSyAcYcWHQLLLtxDuTwyHMFAZFsCUyhWH0ZA"
-)
-GOOGLE_PLACES_API_KEY = os.environ.get(
-    "GOOGLE_PLACES_API_KEY", "AIzaSyAcYcWHQLLLtxDuTwyHMFAZFsCUyhWH0ZA"
-)
+GOOGLE_MAPS_API_KEY = config("GOOGLE_MAPS_API_KEY")
+GOOGLE_PLACES_API_KEY = config("GOOGLE_PLACES_API_KEY")
