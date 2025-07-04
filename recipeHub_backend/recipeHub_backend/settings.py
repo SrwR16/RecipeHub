@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "support",
     "chatAPI",
     "masterChef",
+    "food_map",
     "corsheaders",
 ]
 
@@ -215,3 +216,11 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+# Google Maps API Configuration
+GOOGLE_MAPS_API_KEY = os.environ.get(
+    "GOOGLE_MAPS_API_KEY", "AIzaSyAcYcWHQLLLtxDuTwyHMFAZFsCUyhWH0ZA"
+)
+GOOGLE_PLACES_API_KEY = os.environ.get(
+    "GOOGLE_PLACES_API_KEY", "AIzaSyAcYcWHQLLLtxDuTwyHMFAZFsCUyhWH0ZA"
+)

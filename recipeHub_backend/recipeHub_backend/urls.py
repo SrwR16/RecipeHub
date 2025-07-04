@@ -20,6 +20,7 @@ urlpatterns = [
     path("api/rating/", include("ratings.urls")),
     path("api/subscription/", include("subscription.urls")),
     path("api/ai/", include("masterChef.urls")),
+    path("api/food-map/", include("food_map.urls")),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

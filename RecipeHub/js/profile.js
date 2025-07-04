@@ -117,12 +117,7 @@ const displayOrderData = (item) => {
   container.innerHTML += orderHTML;
 };
 
-const logout = () => {
-  alert("Logout Successfully");
-  localStorage.removeItem("tokens");
-  localStorage.removeItem("user_id");
-  window.location.href = "auth.html";
-};
+// Logout function is defined globally in HTML files
 navBar();
 loadProfile();
 orderShow();

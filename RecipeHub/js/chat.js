@@ -213,12 +213,7 @@ const getUser = () => {
   }
 };
 
-const logout = () => {
-  alert("Logout Successfully");
-  localStorage.removeItem("tokens");
-  localStorage.removeItem("user_id");
-  window.location.href = "auth.html";
-};
+// Logout function is defined globally in HTML files
 
 getUser();
 

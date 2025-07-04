@@ -48,6 +48,49 @@
         },
       };
     </script>
+
+    <style>
+      .filter-card {
+        @apply bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg border border-gray-200/50;
+      }
+
+      .create-post-card {
+        @apply bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg border border-gray-200/50;
+      }
+
+      .stat-item {
+        @apply flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0;
+      }
+
+      .stat-label {
+        @apply text-sm text-gray-600;
+      }
+
+      .stat-value {
+        @apply text-lg font-bold text-gray-900;
+      }
+
+      .form-label {
+        @apply block text-sm font-medium text-gray-700 mb-2;
+      }
+
+      .form-input {
+        @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300;
+      }
+
+      .btn-primary {
+        @apply bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+      }
+
+      .btn-secondary {
+        @apply bg-white text-orange-600 border-2 border-orange-200 px-6 py-3 rounded-lg font-semibold hover:bg-orange-50 hover:border-orange-300 transition-all duration-300;
+      }
+
+      .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+    </style>
   </head>
   <body class="font-body bg-gray-50">
     <!-- Modern Minimalist Header -->
@@ -299,6 +342,7 @@
                   >NEW</span
                 >
               </a>
+              <a href="./podcast.html" class="modern-nav-link">Podcasts</a>
               <a href="./subscription.html" class="modern-nav-link">Premium</a>
               <a href="./contact.html" class="modern-nav-link">Support</a>
             </div>
@@ -315,6 +359,7 @@
               Food Map
               <span class="ml-2 px-2 py-0.5 text-xs font-semibold bg-orange-100 text-orange-800 rounded-full">NEW</span>
             </a>
+            <a href="./podcast.html" class="block py-2 text-gray-700">Podcasts</a>
             <a href="./subscription.html" class="block py-2 text-gray-700">Premium</a>
             <a href="./contact.html" class="block py-2 text-gray-700">Support</a>
 
@@ -356,111 +401,204 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex min-h-screen bg-gray-50 pt-20">
-      <!-- Left Column: Group List -->
-      <div class="w-1/4 bg-white shadow-md rounded-lg p-4 m-4 h-fit">
-        <h2 class="font-bold text-xl mb-4 text-gray-900">Recipe Groups</h2>
-        <div id="group-set-left">
-          <ul id="group-list" class="space-y-2">
-            <!-- Groups will be dynamically populated here -->
-          </ul>
-        </div>
-
-        <!-- Input Field to Add Group -->
-        <div class="mt-4">
-          <input
-            type="text"
-            id="group-input"
-            class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            placeholder="Enter group name"
-          />
-          <button
-            id="add-group-btn"
-            class="mt-2 w-full bg-primary-600 text-white py-2 rounded-lg hover:bg-primary-700 transition"
+    <main class="pt-28 min-h-screen bg-gray-50">
+      <!-- Hero Section -->
+      <section class="hero-section py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div
+            class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-6"
           >
-            Create New Group
-          </button>
-        </div>
-      </div>
-
-      <!-- Middle Column: User Posts -->
-      <div class="w-1/2 overflow-y-scroll h-screen p-4">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="font-bold text-2xl text-gray-900">My Recipe Posts</h2>
-          <p class="font-medium text-primary-600"><a href="./recipe.html">← Back to All Recipes</a></p>
-        </div>
-
-        <!-- Personal Posts Container -->
-        <div id="post-container" class="space-y-6">
-          <!-- Dynamic personal posts will be appended here -->
-        </div>
-      </div>
-
-      <!-- Right Column: Post Form -->
-      <div class="w-1/4 bg-white shadow-md rounded-lg p-6 m-4 h-fit">
-        <h2 class="font-bold text-xl mb-4 text-gray-900">Share New Recipe</h2>
-
-        <!-- Title Field -->
-        <form id="postForm">
-          <input
-            type="text"
-            class="w-full border border-gray-300 rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-primary-500"
-            placeholder="Recipe title"
-          />
-
-          <!-- Text Area -->
-          <textarea
-            class="w-full p-3 border border-gray-300 rounded-lg resize-none h-24 focus:outline-none focus:ring-2 focus:ring-primary-500"
-            placeholder="Share your delicious recipe..."
-          ></textarea>
-
-          <!-- File Upload Icons -->
-          <div class="mt-4 flex items-center space-x-6">
-            <label class="cursor-pointer">
-              <i class="fas fa-image text-primary-600 hover:text-primary-700 transition text-2xl"></i>
-              <input type="file" class="hidden" accept="image/*" />
-            </label>
-            <label class="cursor-pointer">
-              <i class="fas fa-video text-primary-600 hover:text-primary-700 transition text-2xl"></i>
-              <input type="file" class="hidden" accept="video/*" />
-            </label>
+            <span class="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></span>
+            Your Recipe Collection
           </div>
+          <h1 class="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 font-display">
+            My
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"
+              >Recipe Portfolio</span
+            >
+          </h1>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            Manage and showcase your culinary creations, track engagement, and share your passion for cooking with the
+            world
+          </p>
+        </div>
+      </section>
 
-          <!-- Flavors, Region, and Season -->
-          <div class="mt-4 space-y-3">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Flavor Profile</label>
-              <input
-                type="text"
-                class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-primary-500"
-                placeholder="Sweet, savory, spicy..."
-              />
+      <!-- Main Timeline Content -->
+      <section class="pb-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid lg:grid-cols-4 gap-8">
+            <!-- Left Sidebar: Recipe Stats & Groups -->
+            <div class="lg:col-span-1">
+              <div class="filter-card p-6 sticky top-32">
+                <div class="flex items-center justify-between mb-6">
+                  <h2 class="text-xl font-bold text-gray-900">My Stats</h2>
+                </div>
+
+                <!-- Recipe Stats -->
+                <div class="space-y-4 mb-6">
+                  <div class="stat-item">
+                    <span class="stat-label">Total Recipes</span>
+                    <span id="total-recipes" class="stat-value">0</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-label">Total Likes</span>
+                    <span id="total-likes" class="stat-value">0</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-label">Comments</span>
+                    <span id="total-comments" class="stat-value">0</span>
+                  </div>
+                </div>
+
+                <!-- Recipe Groups -->
+                <div class="mb-6">
+                  <h3 class="text-lg font-semibold text-gray-900 mb-4">Recipe Groups</h3>
+                  <div id="group-set-left">
+                    <ul id="group-list" class="space-y-2">
+                      <!-- Groups will be dynamically populated here -->
+                    </ul>
+                  </div>
+
+                  <!-- Add Group Input -->
+                  <div class="mt-4">
+                    <input type="text" id="group-input" class="form-input text-sm" placeholder="Enter group name" />
+                    <button id="add-group-btn" class="mt-2 w-full btn-secondary text-sm py-2">Create New Group</button>
+                  </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="border-t border-gray-200 pt-4">
+                  <a href="./timeline.html" class="w-full btn-secondary text-sm mb-2">
+                    <i class="fas fa-globe mr-2"></i>
+                    View All Recipes
+                  </a>
+                  <a href="./recipe.html" class="w-full btn-secondary text-sm">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Back to Discovery
+                  </a>
+                </div>
+              </div>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Region</label>
-              <input
-                type="text"
-                class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-primary-500"
-                placeholder="Italian, Asian, Mexican..."
-              />
+
+            <!-- Center: Recipe Feed -->
+            <div class="lg:col-span-2">
+              <div class="flex items-center justify-between mb-6">
+                <div>
+                  <h2 class="text-2xl font-bold text-gray-900">My Recipe Collection</h2>
+                  <p class="text-gray-600 text-sm">Manage and showcase your culinary creations</p>
+                </div>
+                <a
+                  href="./timeline.html"
+                  class="text-orange-600 hover:text-orange-700 font-medium text-sm flex items-center"
+                >
+                  <i class="fas fa-globe mr-1"></i>
+                  View All
+                </a>
+              </div>
+
+              <!-- Personal Posts Container -->
+              <div id="post-container" class="space-y-6">
+                <!-- Dynamic personal posts will be appended here -->
+              </div>
+
+              <!-- Load More -->
+              <div class="text-center mt-8">
+                <button class="btn-secondary">
+                  <i class="fas fa-arrow-down mr-2"></i>
+                  Load More Recipes
+                </button>
+              </div>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Season</label>
-              <input
-                type="text"
-                class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-primary-500"
-                placeholder="Summer, Winter, All seasons..."
-              />
+
+            <!-- Right Sidebar: Create Recipe -->
+            <div class="lg:col-span-1">
+              <div class="create-post-card p-6">
+                <div class="flex items-center mb-6">
+                  <div class="w-3 h-3 bg-orange-500 rounded-full mr-2 animate-pulse"></div>
+                  <h2 class="text-xl font-bold text-gray-900">Create Recipe</h2>
+                </div>
+
+                <!-- Create Recipe Form -->
+                <form id="postForm" class="space-y-4">
+                  <div>
+                    <label class="form-label">Recipe Title</label>
+                    <input type="text" class="form-input" placeholder="Enter recipe title" />
+                  </div>
+
+                  <div>
+                    <label class="form-label">Recipe Instructions</label>
+                    <textarea class="form-input resize-none h-24" placeholder="Share your recipe details..."></textarea>
+                  </div>
+
+                  <!-- Media Upload -->
+                  <div>
+                    <label class="form-label">Recipe Media</label>
+                    <div class="flex space-x-4">
+                      <label class="flex-1 cursor-pointer">
+                        <div
+                          class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-orange-400 transition-colors"
+                        >
+                          <i class="fas fa-image text-2xl text-gray-400 mb-2"></i>
+                          <p class="text-sm text-gray-500">Upload Photo</p>
+                        </div>
+                        <input type="file" class="hidden" accept="image/*" />
+                      </label>
+                      <label class="flex-1 cursor-pointer">
+                        <div
+                          class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-orange-400 transition-colors"
+                        >
+                          <i class="fas fa-video text-2xl text-gray-400 mb-2"></i>
+                          <p class="text-sm text-gray-500">Upload Video</p>
+                        </div>
+                        <input type="file" class="hidden" accept="video/*" />
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Recipe Details -->
+                  <div>
+                    <label class="form-label">Flavor Profile</label>
+                    <input type="text" class="form-input" placeholder="Sweet, savory, spicy..." />
+                  </div>
+
+                  <div>
+                    <label class="form-label">Region/Cuisine</label>
+                    <select class="form-input">
+                      <option value="">Select cuisine type</option>
+                      <option value="Italian">Italian</option>
+                      <option value="Asian">Asian</option>
+                      <option value="Mexican">Mexican</option>
+                      <option value="Indian">Indian</option>
+                      <option value="Mediterranean">Mediterranean</option>
+                      <option value="American">American</option>
+                      <option value="French">French</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="form-label">Best Season</label>
+                    <select id="season" class="form-input">
+                      <option value="">Select season</option>
+                      <option value="Spring">Spring</option>
+                      <option value="Summer">Summer</option>
+                      <option value="Fall">Fall</option>
+                      <option value="Winter">Winter</option>
+                      <option value="All Year">All Year Round</option>
+                    </select>
+                  </div>
+
+                  <button type="submit" class="w-full btn-primary">
+                    <i class="fas fa-plus mr-2"></i>
+                    Share Recipe
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
-          <button
-            type="submit"
-            class="mt-4 w-full bg-primary-600 text-white py-2 rounded-lg hover:bg-primary-700 transition font-medium"
-          >
-            Share Recipe
-          </button>
-        </form>
-      </div>
+        </div>
+      </section>
     </main>
 
     <!-- Footer -->

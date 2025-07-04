@@ -72,6 +72,70 @@
         width: 100%;
         border-radius: 1rem;
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+      }
+
+      /* Ensure Leaflet controls stay within map boundaries */
+      .leaflet-container {
+        position: relative !important;
+        border-radius: 1rem;
+        overflow: hidden;
+      }
+
+      /* Fix Leaflet control positioning */
+      .leaflet-control-container {
+        position: relative;
+      }
+
+      /* Ensure map doesn't break out of its container */
+      .map-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 1rem;
+      }
+
+      /* Fix grid layout to prevent content overflow */
+      .food-map-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      @media (min-width: 1024px) {
+        .food-map-grid {
+          grid-template-columns: 1fr 2fr 1fr;
+        }
+      }
+
+      /* Ensure sidebars don't interfere with map */
+      .sidebar-container {
+        position: relative;
+        z-index: 2;
+      }
+
+      /* Additional defensive CSS for Leaflet */
+      .leaflet-container .leaflet-control-zoom {
+        position: absolute !important;
+      }
+
+      .leaflet-container .leaflet-control-attribution {
+        position: absolute !important;
+      }
+
+      /* Prevent any global positioning overrides */
+      .leaflet-container,
+      .leaflet-container * {
+        box-sizing: border-box;
+      }
+
+      /* Ensure proper stacking order */
+      .food-map-section {
+        position: relative;
+        z-index: 1;
       }
 
       .feature-highlight {
@@ -328,6 +392,7 @@
                   >NEW</span
                 >
               </a>
+              <a href="./podcast.html" class="modern-nav-link">Podcasts</a>
               <a href="./subscription.html" class="modern-nav-link">Premium</a>
               <a href="./contact.html" class="modern-nav-link">Support</a>
             </div>
@@ -344,6 +409,7 @@
               Food Map
               <span class="ml-2 px-2 py-0.5 text-xs font-semibold bg-orange-100 text-orange-800 rounded-full">NEW</span>
             </a>
+            <a href="./podcast.html" class="block py-2 text-gray-700">Podcasts</a>
             <a href="./subscription.html" class="block py-2 text-gray-700">Premium</a>
             <a href="./contact.html" class="block py-2 text-gray-700">Support</a>
 
@@ -436,15 +502,21 @@
       </section>
 
       <!-- Food Map Interface -->
-      <section class="pb-16">
+      <section class="pb-16 food-map-section">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="grid lg:grid-cols-4 gap-8">
+          <div class="food-map-grid lg:grid-cols-4 gap-8">
             <!-- Left Sidebar: Filters -->
-            <div class="lg:col-span-1">
+            <div class="lg:col-span-1 sidebar-container">
               <div class="filter-card p-6 sticky top-32">
                 <div class="flex items-center justify-between mb-6">
                   <h2 class="text-xl font-bold text-gray-900">Dish Filters</h2>
                   <button class="text-orange-600 hover:text-orange-700 text-sm font-medium">Clear All</button>
+                </div>
+
+                <!-- Search -->
+                <div class="mb-6">
+                  <label class="form-label">Search Places</label>
+                  <input type="text" placeholder="Search restaurants, cafes..." class="form-input" />
                 </div>
 
                 <!-- Location -->
@@ -456,18 +528,12 @@
                   </button>
                 </div>
 
-                <!-- Dish Category -->
+                <!-- Food Categories -->
                 <div class="mb-6">
-                  <label class="form-label">Dish Category</label>
-                  <select class="form-input">
-                    <option value="">All Dishes</option>
-                    <option value="appetizers">Appetizers</option>
-                    <option value="main-course">Main Courses</option>
-                    <option value="desserts">Desserts</option>
-                    <option value="drinks">Beverages</option>
-                    <option value="street-food">Street Food</option>
-                    <option value="signature">Signature Dishes</option>
-                  </select>
+                  <label class="form-label">Food Categories</label>
+                  <div id="category-filters" class="flex flex-wrap gap-2">
+                    <!-- Categories will be populated by JavaScript -->
+                  </div>
                 </div>
 
                 <!-- Cuisine Style -->
@@ -552,7 +618,9 @@
                 </div>
 
                 <!-- Map Container (Backend Connected) -->
-                <div id="map"></div>
+                <div class="map-container">
+                  <div id="map"></div>
+                </div>
 
                 <div class="mt-4 text-center">
                   <p class="text-sm text-gray-600">
@@ -563,171 +631,20 @@
               </div>
             </div>
 
-            <!-- Right Sidebar: Dish List -->
-            <div class="lg:col-span-1">
+            <!-- Right Sidebar: Places List -->
+            <div class="lg:col-span-1 sidebar-container">
               <div class="filter-card p-6">
                 <div class="flex items-center justify-between mb-6">
-                  <h2 class="text-xl font-bold text-gray-900">Local Dishes</h2>
-                  <span class="text-sm text-gray-500">18 found</span>
+                  <h2 class="text-xl font-bold text-gray-900">Food Places</h2>
+                  <span id="places-count" class="text-sm text-gray-500">0 found</span>
                 </div>
 
-                <!-- Dish Cards -->
-                <div class="space-y-4 max-h-96 overflow-y-auto">
-                  <!-- Dish Card 1 -->
-                  <div class="restaurant-card p-4">
-                    <div class="flex items-start space-x-3">
-                      <img
-                        src="https://images.unsplash.com/photo-1563379091339-03246963d96c?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
-                        alt="Truffle Pasta"
-                        class="w-12 h-12 rounded-lg object-cover"
-                      />
-                      <div class="flex-1 min-w-0">
-                        <h3 class="font-semibold text-gray-900 text-sm">Truffle Pasta Perfection</h3>
-                        <p class="text-xs text-orange-600 mb-1">Signature • €18</p>
-                        <div class="flex items-center mb-1">
-                          <div class="flex text-yellow-400 text-xs">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                          </div>
-                          <span class="text-xs text-gray-500 ml-1">(4.9)</span>
-                        </div>
-                        <p class="text-xs text-gray-500">📍 Bella Vista Trattoria • 0.8km</p>
-                      </div>
-                    </div>
-                  </div>
+                <!-- Search Results Info -->
+                <div id="search-results-info"></div>
 
-                  <!-- Dish Card 2 -->
-                  <div class="restaurant-card p-4">
-                    <div class="flex items-start space-x-3">
-                      <img
-                        src="https://images.unsplash.com/photo-1525755662778-989d0524087e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
-                        alt="Kung Pao Chicken"
-                        class="w-12 h-12 rounded-lg object-cover"
-                      />
-                      <div class="flex-1 min-w-0">
-                        <h3 class="font-semibold text-gray-900 text-sm">Authentic Kung Pao Chicken</h3>
-                        <p class="text-xs text-orange-600 mb-1">Main Course • €12</p>
-                        <div class="flex items-center mb-1">
-                          <div class="flex text-yellow-400 text-xs">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="far fa-star"></i>
-                          </div>
-                          <span class="text-xs text-gray-500 ml-1">(4.2)</span>
-                        </div>
-                        <p class="text-xs text-gray-500">📍 Dragon Garden • 1.2km</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Dish Card 3 -->
-                  <div class="restaurant-card p-4">
-                    <div class="flex items-start space-x-3">
-                      <img
-                        src="https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
-                        alt="Butter Chicken"
-                        class="w-12 h-12 rounded-lg object-cover"
-                      />
-                      <div class="flex-1 min-w-0">
-                        <h3 class="font-semibold text-gray-900 text-sm">Creamy Butter Chicken</h3>
-                        <p class="text-xs text-orange-600 mb-1">Main Course • €15</p>
-                        <div class="flex items-center mb-1">
-                          <div class="flex text-yellow-400 text-xs">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
-                          </div>
-                          <span class="text-xs text-gray-500 ml-1">(4.6)</span>
-                        </div>
-                        <p class="text-xs text-gray-500">📍 Spice Route • 1.5km</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Dish Card 4 -->
-                  <div class="restaurant-card p-4">
-                    <div class="flex items-start space-x-3">
-                      <img
-                        src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
-                        alt="Artisan Pizza"
-                        class="w-12 h-12 rounded-lg object-cover"
-                      />
-                      <div class="flex-1 min-w-0">
-                        <h3 class="font-semibold text-gray-900 text-sm">Artisan Margherita Pizza</h3>
-                        <p class="text-xs text-orange-600 mb-1">Main Course • €14</p>
-                        <div class="flex items-center mb-1">
-                          <div class="flex text-yellow-400 text-xs">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                          </div>
-                          <span class="text-xs text-gray-500 ml-1">(4.7)</span>
-                        </div>
-                        <p class="text-xs text-gray-500">📍 Rustica Pizzeria • 0.6km</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Dish Card 5 -->
-                  <div class="restaurant-card p-4">
-                    <div class="flex items-start space-x-3">
-                      <img
-                        src="https://images.unsplash.com/photo-1551183053-bf91a1d81141?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
-                        alt="Ramen Bowl"
-                        class="w-12 h-12 rounded-lg object-cover"
-                      />
-                      <div class="flex-1 min-w-0">
-                        <h3 class="font-semibold text-gray-900 text-sm">Tonkotsu Ramen Special</h3>
-                        <p class="text-xs text-orange-600 mb-1">Main Course • €16</p>
-                        <div class="flex items-center mb-1">
-                          <div class="flex text-yellow-400 text-xs">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                          </div>
-                          <span class="text-xs text-gray-500 ml-1">(4.8)</span>
-                        </div>
-                        <p class="text-xs text-gray-500">📍 Sakura Noodle Bar • 1.1km</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Dish Card 6 -->
-                  <div class="restaurant-card p-4">
-                    <div class="flex items-start space-x-3">
-                      <img
-                        src="https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
-                        alt="Chocolate Soufflé"
-                        class="w-12 h-12 rounded-lg object-cover"
-                      />
-                      <div class="flex-1 min-w-0">
-                        <h3 class="font-semibold text-gray-900 text-sm">Dark Chocolate Soufflé</h3>
-                        <p class="text-xs text-orange-600 mb-1">Dessert • €9</p>
-                        <div class="flex items-center mb-1">
-                          <div class="flex text-yellow-400 text-xs">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                          </div>
-                          <span class="text-xs text-gray-500 ml-1">(4.9)</span>
-                        </div>
-                        <p class="text-xs text-gray-500">📍 Le Petit Café • 0.9km</p>
-                      </div>
-                    </div>
-                  </div>
+                <!-- Places Container -->
+                <div id="places-list" class="space-y-4 max-h-96 overflow-y-auto">
+                  <!-- Places will be populated by JavaScript -->
                 </div>
 
                 <div class="mt-6 pt-4 border-t border-gray-200">
@@ -793,6 +710,10 @@
           </div>
 
           <form id="add-restaurant-form" class="space-y-6">
+            <!-- Hidden fields for coordinates -->
+            <input type="hidden" id="food-item-latitude" value="" />
+            <input type="hidden" id="food-item-longitude" value="" />
+
             <div>
               <label class="form-label">Dish Name</label>
               <input
@@ -948,24 +869,51 @@
     <script src="./js/auth.js"></script>
     <script src="./js/food-map.js"></script>
 
+    <!-- Map Initialization Helper -->
+    <script>
+      // Ensure map container is properly sized when Leaflet initializes
+      document.addEventListener("DOMContentLoaded", function () {
+        // Wait a bit for all styles to be applied
+        setTimeout(() => {
+          if (window.foodMapApp && window.foodMapApp.map) {
+            // Force map to recalculate its size
+            window.foodMapApp.map.invalidateSize();
+          }
+        }, 500);
+      });
+
+      // Handle window resize for proper map sizing
+      window.addEventListener("resize", function () {
+        if (window.foodMapApp && window.foodMapApp.map) {
+          setTimeout(() => {
+            window.foodMapApp.map.invalidateSize();
+          }, 100);
+        }
+      });
+    </script>
+
     <!-- Dish Map Interactions -->
     <script>
-      // Location Detection
+      // Location Detection - Connect to food map app
       document.getElementById("detect-location")?.addEventListener("click", function () {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            function (position) {
-              const lat = position.coords.latitude;
-              const lng = position.coords.longitude;
-              alert(`Location detected: ${lat.toFixed(4)}, ${lng.toFixed(4)}\nSearching for dishes near you...`);
-              // Update map center here
-            },
-            function (error) {
-              alert("Error detecting location: " + error.message);
-            }
-          );
+        if (window.foodMapApp) {
+          window.foodMapApp.requestUserLocation();
         } else {
-          alert("Geolocation is not supported by this browser.");
+          // Fallback for when app isn't loaded yet
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              function (position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                alert(`Location detected: ${lat.toFixed(4)}, ${lng.toFixed(4)}\nSearching for dishes near you...`);
+              },
+              function (error) {
+                alert("Error detecting location: " + error.message);
+              }
+            );
+          } else {
+            alert("Geolocation is not supported by this browser.");
+          }
         }
       });
 
@@ -992,21 +940,28 @@
         }
       });
 
-      // Add Dish Form Submission
+      // Add Dish Form Submission - Connect to food map app
       document.getElementById("add-restaurant-form")?.addEventListener("submit", function (e) {
         e.preventDefault();
-        const formData = {
-          dishName: document.getElementById("restaurant-name").value,
-          category: document.getElementById("restaurant-cuisine").value,
-          price: document.getElementById("restaurant-price").value,
-          location: document.getElementById("signature-dish").value,
-          description: document.getElementById("restaurant-address").value,
-        };
-        console.log("New dish data:", formData);
-        alert("Amazing dish added successfully to the community map! 🍽️");
-        addDishModal.classList.add("hidden");
-        // Reset form
-        document.getElementById("add-restaurant-form").reset();
+
+        if (window.foodMapApp) {
+          // Use the app's method to handle form submission
+          window.foodMapApp.handleAddFoodItemSubmit();
+        } else {
+          // Fallback behavior
+          const formData = {
+            dishName: document.getElementById("restaurant-name").value,
+            category: document.getElementById("restaurant-cuisine").value,
+            price: document.getElementById("restaurant-price").value,
+            location: document.getElementById("signature-dish").value,
+            description: document.getElementById("restaurant-address").value,
+          };
+          console.log("New dish data:", formData);
+          alert("Amazing dish added successfully to the community map! 🍽️");
+          addDishModal.classList.add("hidden");
+          // Reset form
+          document.getElementById("add-restaurant-form").reset();
+        }
       });
     </script>
 

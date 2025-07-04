@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recipe Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+      <h1 class="text-3xl font-bold mb-6">Recipe Loading Test</h1>
+
+      <div class="mb-4">
+        <button onclick="testApiCall()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          Test API Call
+        </button>
+        <button onclick="clearResults()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 ml-2">
+          Clear Results
+        </button>
+      </div>
+
+      <div id="debug-info" class="bg-yellow-50 border border-yellow-200 rounded p-4 mb-4">
+        <h3 class="font-bold">Debug Information:</h3>
+        <div id="debug-content"></div>
+      </div>
+
+      <div id="error-info" class="bg-red-50 border border-red-200 rounded p-4 mb-4 hidden">
+        <h3 class="font-bold text-red-600">Error Information:</h3>
+        <div id="error-content"></div>
+      </div>
+
+      <div id="recipe-container" class="space-y-4">
+        <!-- Recipes will be loaded here -->
+      </div>
+    </div>
+
+    <script>
+      function logDebug(message) {
+        console.log(message);
+        const debugContent = document.getElementById("debug-content");
+        debugContent.innerHTML += "<div>" + message + "</div>";
+      }
+
+      function logError(message) {
+        console.error(message);
+        const errorInfo = document.getElementById("error-info");
+        const errorContent = document.getElementById("error-content");
+        errorInfo.classList.remove("hidden");
+        errorContent.innerHTML += "<div>" + message + "</div>";
+      }
+
+      function clearResults() {
+        document.getElementById("debug-content").innerHTML = "";
+        document.getElementById("error-content").innerHTML = "";
+        document.getElementById("error-info").classList.add("hidden");
+        document.getElementById("recipe-container").innerHTML = "";
+      }
+
+      async function testApiCall() {
+        clearResults();
+
+        logDebug("🚀 Starting recipe test...");
+        logDebug("🌐 Current hostname: " + window.location.hostname);
+        logDebug("🌐 Current protocol: " + window.location.protocol);
+
+        // Determine API base URL
+        const currentHost = window.location.hostname;
+        const protocol = window.location.protocol;
+        let apiBaseUrl;
+
+        if (currentHost !== "localhost" && currentHost !== "127.0.0.1") {
+          apiBaseUrl = `${protocol}//${currentHost}:8000`;
+        } else {
+          apiBaseUrl = `${protocol}//localhost:8000`;
+        }
+
+        const url = `${apiBaseUrl}/api/kitchen/post/`;
+        logDebug("📡 API URL: " + url);
+
+        try {
+          logDebug("⏳ Fetching data...");
+          const response = await fetch(url);
+
+          logDebug("📡 Response status: " + response.status);
+          logDebug("📡 Response ok: " + response.ok);
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          logDebug("📊 Data received: " + JSON.stringify(data, null, 2));
+          logDebug("📊 Number of recipes: " + data.length);
+
+          if (data.length === 0) {
+            logDebug("⚠️ No recipes found");
+            document.getElementById("recipe-container").innerHTML =
+              '<div class="text-center py-8 text-gray-500">No recipes found</div>';
+            return;
+          }
+
+          // Display recipes
+          const container = document.getElementById("recipe-container");
+          container.innerHTML = "";
+
+          data.forEach((recipe, index) => {
+            logDebug(`🍽️ Processing recipe ${index + 1}: ${recipe.title}`);
+
+            const recipeDiv = document.createElement("div");
+            recipeDiv.className = "bg-white rounded-lg shadow p-4";
+
+            recipeDiv.innerHTML = `
+                        <h3 class="text-xl font-bold">${recipe.title}</h3>
+                        <p class="text-gray-600">By: ${recipe.username}</p>
+                        <p class="mt-2">${recipe.ingredients}</p>
+                        <div class="mt-2 text-sm text-gray-500">
+                            <span>Flavor: ${recipe.flavour}</span> |
+                            <span>Region: ${recipe.region}</span> |
+                            <span>Season: ${recipe.seasonal}</span>
+                        </div>
+                        ${
+                          recipe.media
+                            ? `<img src="${recipe.media}" alt="${recipe.title}" class="mt-2 w-full h-48 object-cover rounded">`
+                            : ""
+                        }
+                        <div class="mt-2 text-xs text-gray-400">
+                            Created: ${new Date(recipe.creation_date).toLocaleString()}
+                        </div>
+                    `;
+
+            container.appendChild(recipeDiv);
+          });
+
+          logDebug("✅ Recipes displayed successfully!");
+        } catch (error) {
+          logError("❌ Error: " + error.message);
+          logError("❌ Full error: " + error.toString());
+
+          document.getElementById("recipe-container").innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded p-4">
+                        <p class="text-red-600">Error loading recipes: ${error.message}</p>
+                    </div>
+                `;
+        }
+      }
+
+      // Auto-run test when page loads
+      document.addEventListener("DOMContentLoaded", () => {
+        logDebug("🔍 Page loaded, running automatic test...");
+        testApiCall();
+      });
+    </script>
+  </body>
+</html>

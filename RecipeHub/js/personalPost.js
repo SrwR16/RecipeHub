@@ -98,7 +98,20 @@ function toggleComments(button, recipeID) {
   // Only fetch comments if the section is being opened
   if (isHidden) {
     console.log("Recipe ID:", recipeID);
-    fetch("/api/comment/list/")
+    // Get the API base URL for network compatibility
+    const currentHost = window.location.hostname;
+    const protocol = window.location.protocol;
+    let apiBaseUrl;
+
+    if (currentHost !== "localhost" && currentHost !== "127.0.0.1") {
+      apiBaseUrl = `${protocol}//${currentHost}:8000`;
+    } else {
+      apiBaseUrl = `${protocol}//localhost:8000`;
+    }
+
+    const commentUrl = `${apiBaseUrl}/api/comment/list/`;
+
+    fetch(commentUrl)
       .then((res) => res.json())
       .then((data) => {
         // Clear previous comments (if any)
@@ -132,7 +145,20 @@ function toggleComments(button, recipeID) {
 
 async function fetchGroups() {
   try {
-    const response = await fetch("/api/chat/group/");
+    // Get the API base URL for network compatibility
+    const currentHost = window.location.hostname;
+    const protocol = window.location.protocol;
+    let apiBaseUrl;
+
+    if (currentHost !== "localhost" && currentHost !== "127.0.0.1") {
+      apiBaseUrl = `${protocol}//${currentHost}:8000`;
+    } else {
+      apiBaseUrl = `${protocol}//localhost:8000`;
+    }
+
+    const url = `${apiBaseUrl}/api/chat/group/`;
+
+    const response = await fetch(url);
     if (!response.ok) throw new Error("Network response was not ok");
     const groups = await response.json();
 
@@ -167,7 +193,20 @@ async function addGroup() {
 
   if (groupName) {
     try {
-      const response = await fetch("/api/chat/group/", {
+      // Get the API base URL for network compatibility
+      const currentHost = window.location.hostname;
+      const protocol = window.location.protocol;
+      let apiBaseUrl;
+
+      if (currentHost !== "localhost" && currentHost !== "127.0.0.1") {
+        apiBaseUrl = `${protocol}//${currentHost}:8000`;
+      } else {
+        apiBaseUrl = `${protocol}//localhost:8000`;
+      }
+
+      const url = `${apiBaseUrl}/api/chat/group/`;
+
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -231,7 +270,20 @@ const postSubmit = (event) => {
   }
 
   try {
-    fetch("/api/kitchen/post/", {
+    // Get the API base URL for network compatibility
+    const currentHost = window.location.hostname;
+    const protocol = window.location.protocol;
+    let apiBaseUrl;
+
+    if (currentHost !== "localhost" && currentHost !== "127.0.0.1") {
+      apiBaseUrl = `${protocol}//${currentHost}:8000`;
+    } else {
+      apiBaseUrl = `${protocol}//localhost:8000`;
+    }
+
+    const url = `${apiBaseUrl}/api/kitchen/post/`;
+
+    fetch(url, {
       method: "POST",
       body: formData,
     })
@@ -239,6 +291,8 @@ const postSubmit = (event) => {
       .then((data) => {
         console.log(data);
         alert("Post created successfully!");
+        // Refresh the posts after creating a new one
+        allPost();
       })
       .catch((error) => {
         console.error("Error posting data:", error);
@@ -252,19 +306,70 @@ const postSubmit = (event) => {
 
 // For post to view in timeline
 const allPost = () => {
-  fetch("/api/kitchen/post/")
-    .then((res) => res.json())
-    .then((data) =>
-      data.forEach((item) => {
-        if (localStorage.getItem("user_id") == item.user) {
-          displayPost(item);
+  // Get the API base URL for network compatibility
+  const currentHost = window.location.hostname;
+  const protocol = window.location.protocol;
+  let apiBaseUrl;
+
+  if (currentHost !== "localhost" && currentHost !== "127.0.0.1") {
+    apiBaseUrl = `${protocol}//${currentHost}:8000`;
+  } else {
+    apiBaseUrl = `${protocol}//localhost:8000`;
+  }
+
+  const url = `${apiBaseUrl}/api/kitchen/post/`;
+  console.log("🔍 Fetching personal recipes from:", url);
+
+  fetch(url)
+    .then((res) => {
+      console.log("📡 Response status:", res.status);
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      return res.json();
+    })
+    .then((data) => {
+      console.log("📊 Received recipes:", data.length);
+      const currentUserId = localStorage.getItem("user_id");
+      const userRecipes = data.filter((item) => item.user == currentUserId);
+      console.log("👤 User recipes found:", userRecipes.length);
+
+      if (userRecipes.length > 0) {
+        userRecipes.forEach((item) => displayPost(item));
+      } else {
+        console.warn("⚠️ No personal recipes found");
+        const postContainer = document.getElementById("post-container");
+        if (postContainer) {
+          postContainer.innerHTML =
+            '<div class="text-center py-8"><p class="text-gray-500">No personal recipes found</p></div>';
         }
-      })
-    )
-    .catch((err) => console.error("Error fetching posts:", err));
+      }
+    })
+    .catch((err) => {
+      console.error("❌ Error fetching posts:", err);
+      const postContainer = document.getElementById("post-container");
+      if (postContainer) {
+        postContainer.innerHTML = `
+          <div class="text-center py-8">
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p class="text-red-600">Error loading recipes: ${err.message}</p>
+              <button onclick="allPost()" class="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                Try Again
+              </button>
+            </div>
+          </div>
+        `;
+      }
+    });
 };
 const displayPost = (item) => {
+  console.log("🎨 Displaying personal post:", item.title);
   const postContainer = document.getElementById("post-container");
+
+  if (!postContainer) {
+    console.error("❌ post-container element not found in personal posts!");
+    return;
+  }
 
   const postElement = document.createElement("div");
   postElement.classList.add("bg-white", "shadow-md", "rounded-lg", "p-4", "mb-4", "transition", "hover:shadow-lg");
@@ -323,9 +428,24 @@ const deletePost = (postId) => {
   console.log(postId);
   const postElement = document.getElementById(`post-${postId}`);
   if (postElement) {
-    fetch(`/api/kitchen/post/${postId}/`, { method: "DELETE" })
+    // Get the API base URL for network compatibility
+    const currentHost = window.location.hostname;
+    const protocol = window.location.protocol;
+    let apiBaseUrl;
+
+    if (currentHost !== "localhost" && currentHost !== "127.0.0.1") {
+      apiBaseUrl = `${protocol}//${currentHost}:8000`;
+    } else {
+      apiBaseUrl = `${protocol}//localhost:8000`;
+    }
+
+    const url = `${apiBaseUrl}/api/kitchen/post/${postId}/`;
+
+    fetch(url, { method: "DELETE" })
       .then((response) => {
         if (!response.ok) throw new Error("Failed to delete post");
+        // Remove the post element from the DOM
+        postElement.remove();
       })
       .catch((error) => console.error(error));
   }
@@ -349,7 +469,20 @@ function postComment(recipeID) {
     recipe: recipeID,
   };
 
-  fetch("/api/comment/list/", {
+  // Get the API base URL for network compatibility
+  const currentHost = window.location.hostname;
+  const protocol = window.location.protocol;
+  let apiBaseUrl;
+
+  if (currentHost !== "localhost" && currentHost !== "127.0.0.1") {
+    apiBaseUrl = `${protocol}//${currentHost}:8000`;
+  } else {
+    apiBaseUrl = `${protocol}//localhost:8000`;
+  }
+
+  const url = `${apiBaseUrl}/api/comment/list/`;
+
+  fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -360,7 +493,20 @@ function postComment(recipeID) {
     .then((data) => (commentText.value = ""));
 }
 const deleteComment = (commentID) => {
-  fetch(`/api/comment/list/${commentID}/`, {
+  // Get the API base URL for network compatibility
+  const currentHost = window.location.hostname;
+  const protocol = window.location.protocol;
+  let apiBaseUrl;
+
+  if (currentHost !== "localhost" && currentHost !== "127.0.0.1") {
+    apiBaseUrl = `${protocol}//${currentHost}:8000`;
+  } else {
+    apiBaseUrl = `${protocol}//localhost:8000`;
+  }
+
+  const url = `${apiBaseUrl}/api/comment/list/${commentID}/`;
+
+  fetch(url, {
     method: "DELETE",
     headers: {
       "content-type": "application/json",
@@ -388,12 +534,7 @@ const navBar = () => {
         `;
   }
 };
-const logout = () => {
-  alert("Logout Successfully");
-  localStorage.removeItem("tokens");
-  localStorage.removeItem("user_id");
-  window.location.href = "auth.html";
-};
+// Logout function is defined globally in HTML files
 
 navBar();
 getUser();
